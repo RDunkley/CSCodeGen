@@ -51,11 +51,6 @@ namespace CSCodeGen
 		public string NameSpace { get; private set; }
 
 		/// <summary>
-		///   Usings included in the file.
-		/// </summary>
-		public List<string> Usings { get; private set; }
-
-		/// <summary>
 		///   Type contained in the namespace.
 		/// </summary>
 		public NamespaceTypeInfo Type { get; private set; }
@@ -99,7 +94,6 @@ namespace CSCodeGen
 			RelativePath = relativePath;
 			NameSpace = nameSpace;
 			Type = typeObject;
-			Usings = new List<string>();
 			Description = description;
 			FileNameExtension = fileNameExtension;
 		}
@@ -145,10 +139,9 @@ namespace CSCodeGen
 				WriteFileSubHeader(wr);
 
 				// Add usings.
-				if(Usings.Count > 0)
+				if(Type.Usings.Length > 0)
 				{
-					Usings.Sort();
-					foreach (string item in Usings)
+					foreach (string item in Type.Usings)
 						DocumentationHelper.WriteLine(wr, string.Format("using {0};", item), 0);
 					DocumentationHelper.WriteLine(wr);
 				}

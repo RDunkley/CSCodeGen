@@ -11,6 +11,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
+using System.Collections.Generic;
 
 namespace CSCodeGen
 {
@@ -25,6 +26,11 @@ namespace CSCodeGen
 		///   String containing the base class or interface support. (Ex: BaseTypeInfo or IDisposable, IComparable).
 		/// </summary>
 		public string Base { get; set; }
+
+		/// <summary>
+		///   List of required usings for the class. Initialized to the default for Visual Studio.
+		/// </summary>
+		public string[] Usings { get; private set; }
 
 		#endregion Properties
 
@@ -43,6 +49,45 @@ namespace CSCodeGen
 		public NamespaceTypeInfo(string access, string name, string summary, string baseString = null, string remarks = null) : base(access, name, summary, remarks)
 		{
 			Base = baseString;
+			Usings = new string[0];
+		}
+
+		/// <summary>
+		///   Adds a list of usings to the Usings of this <see cref="NamespaceTypeInfo"/> object.
+		/// </summary>
+		/// <param name="usings">Array of usings to be added.</param>
+		public void AddUsings(string[] usings)
+		{
+			List<string> usingList = new List<string>(Usings.Length);
+			usingList.AddRange(Usings);
+
+			// Add any usings that are not duplicates.
+			foreach(string usingString in usings)
+			{
+				if (!usingList.Contains(usingString))
+					usingList.Add(usingString);
+			}
+
+			if(usingList.Count > 0)
+				usingList.Sort();
+			Usings = usingList.ToArray();
+		}
+
+		/// <summary>
+		///   Add an additonal using to the Usings of this <see cref="NamespaceTypeInfo"/> object.
+		/// </summary>
+		/// <param name="usingString">Using string to be added.</param>
+		public void AddUsing(string usingString)
+		{
+			List<string> usingList = new List<string>(Usings.Length);
+			usingList.AddRange(Usings);
+
+			if (usingList.Contains(usingString))
+				return;
+
+			usingList.Add(usingString);
+			usingList.Sort();
+			Usings = usingList.ToArray();
 		}
 
 		#endregion Methods

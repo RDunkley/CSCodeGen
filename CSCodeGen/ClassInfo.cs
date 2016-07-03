@@ -46,9 +46,9 @@ namespace CSCodeGen
 		public List<MethodInfo> Methods { get; private set; }
 
 		/// <summary>
-		///   List of <see cref="ClassInfo"/> objects representing the sub-classes of the class. Can be null.
+		///   Array of <see cref="ClassInfo"/> objects representing the sub-classes of the class. Can be empty.
 		/// </summary>
-		public List<ClassInfo> ChildClasses { get; private set; }
+		public ClassInfo[] ChildClasses { get; private set; }
 
 		/// <summary>
 		///   List of <see cref="ConstructorInfo"/> objects representing the constructors of the class. Can be null.
@@ -75,8 +75,27 @@ namespace CSCodeGen
 			Properties = new List<PropertyInfo>();
 			Methods = new List<MethodInfo>();
 			Enums = new List<EnumInfo>();
-			ChildClasses = new List<ClassInfo>();
+			ChildClasses = new ClassInfo[0];
 			Constructors = new List<ConstructorInfo>();
+
+			// Add the default that Visual Studio adds.
+			AddUsing("System");
+			AddUsing("System.Collections.Generic");
+			AddUsing("System.Linq");
+			AddUsing("System.Text");
+			AddUsing("System.Threading.Tasks");
+		}
+
+
+		public void AddChildClass(ClassInfo child)
+		{
+			List<ClassInfo> childList = new List<ClassInfo>(ChildClasses);
+			if (childList.Contains(child))
+				return;
+			childList.Add(child);
+			AddUsings(child.Usings);
+
+			ChildClasses = childList.ToArray();
 		}
 
 		/// <summary>
@@ -114,16 +133,18 @@ namespace CSCodeGen
 				previous = true;
 			}
 
-			if (ChildClasses.Count > 0)
+			if (ChildClasses.Length > 0)
 			{
 				if (previous)
 					DocumentationHelper.WriteLine(wr);
 				DocumentationHelper.WriteRegionStart(wr, "Classes", indentOffset);
-				ChildClasses.Sort();
-				for (int i = 0; i < ChildClasses.Count; i++)
+
+				List<ClassInfo> childList = new List<ClassInfo>(ChildClasses);
+				childList.Sort();
+				for (int i = 0; i < childList.Count; i++)
 				{
-					ChildClasses[i].Write(wr, indentOffset);
-					if (i != ChildClasses.Count - 1)
+					childList[i].Write(wr, indentOffset);
+					if (i != childList.Count - 1)
 						DocumentationHelper.WriteLine(wr);
 				}
 				DocumentationHelper.WriteRegionEnd(wr, "Classes", indentOffset);

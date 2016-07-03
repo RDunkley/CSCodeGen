@@ -153,17 +153,15 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="nameSpace">Namespace of the file.</param>
 		/// <param name="typeObject"><see cref="NamespaceTypeInfo"/> object containing the type to be represented in the file.</param>
-		/// <param name="usings">Usings contained in the file.</param>
 		/// <param name="relativePath">Relative path where the file is represented.</param>
 		/// <param name="description">Description of the file.</param>
 		/// <param name="fileNameExtension">Extension to add to the filename. (Ex: 'designer' would be for filename.designer.cs). Can be null or empty.</param>
-		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, <i>info</i>, <i>usings</i>, or one of the strings in <i>usings</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameSpace</i>, or one of the strings in <i>usings</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, or <i>info</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>nameSpace</i> is an empty string.</exception>
 		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
-		public void AddFile(string nameSpace, NamespaceTypeInfo typeObject, string[] usings, string relativePath = null, string description = null, string fileNameExtension = null)
+		public void AddFile(string nameSpace, NamespaceTypeInfo typeObject, string relativePath = null, string description = null, string fileNameExtension = null)
 		{
 			FileInfo file = new FileInfo(nameSpace, typeObject, relativePath, description, fileNameExtension);
-			file.Usings.AddRange(usings);
 			Files.Add(new ProjectFile(file));
 		}
 
@@ -173,7 +171,6 @@ namespace CSCodeGen
 		/// <param name="nameSpace">Namespace of the file.</param>
 		/// <param name="userClass">User class of the GUI item.</param>
 		/// <param name="designer"><see cref="DesignerInfo"/> object containing the designer file information.</param>
-		/// <param name="usings">Usings contained in the file.</param>
 		/// <param name="relativePath">Relative path where the file is represented.</param>
 		/// <param name="description">Description of the file.</param>
 		/// <param name="fileNameExtension">Extension to add to the user class filename. Can be null or empty.</param>
@@ -181,13 +178,12 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentException"><i>nameSpace</i>, or one of the strings in <i>usings</i> is an empty string.</exception>
 		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
 		/// <exception cref="ArgumentException"><i>fileNameExtension</i> was specified as 'designer'. (Can not specify designer for this method).</exception>
-		public void AddGUIFile(string nameSpace, ClassInfo userClass, DesignerInfo designer, string[] usings, string relativePath = null, string description = null, string fileNameExtension = null)
+		public void AddGUIFile(string nameSpace, ClassInfo userClass, DesignerInfo designer, string relativePath = null, string description = null, string fileNameExtension = null)
 		{
 			if (string.Compare(fileNameExtension, "designer", true) == 0)
 				throw new ArgumentException("fileNameExtension cannot be 'designer' since a designer file will already be added.");
 
 			FileInfo userFile = new FileInfo(nameSpace, userClass, relativePath, description, fileNameExtension);
-			userFile.Usings.AddRange(usings);
 
 			// Create a new class to use as the designer portion.
 			ClassInfo info = new ClassInfo("partial", userClass.Name, null, userClass.Summary, userClass.Remarks);
