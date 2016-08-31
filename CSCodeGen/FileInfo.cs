@@ -136,7 +136,9 @@ namespace CSCodeGen
 			using (StreamWriter wr = new StreamWriter(fullPath))
 			{
 				DocumentationHelper.WriteFileHeader(wr, FileName, Description);
-				WriteFileSubHeader(wr);
+
+				if(DefaultValues.IncludeSubHeader)
+					WriteFileSubHeader(wr);
 
 				// Add usings.
 				if(Type.Usings.Length > 0)

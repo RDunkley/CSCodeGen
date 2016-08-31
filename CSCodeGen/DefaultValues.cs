@@ -96,6 +96,12 @@ namespace CSCodeGen
 		/// <remarks>This line is wrapped if needed.</remarks>
 		public static string[] LicenseTemplate { get; set; }
 
+		/// <summary>
+		///   Determines whether the sub-header should be added to the file header.
+		/// </summary>
+		/// <remarks>The sub-header breaks down all the components of the class.</remarks>
+		public static bool IncludeSubHeader { get; set; }
+
 		#endregion Properties
 
 		#region Methods
@@ -130,6 +136,7 @@ namespace CSCodeGen
 			FileInfoTemplate = GenerateFileInfoTemplate();
 			CopyrightTemplate = GenerateCopyrightTemplate();
 			LicenseTemplate = GenerateLicenseTemplate();
+			IncludeSubHeader = true;
 		}
 
 		/// <summary>
