@@ -119,24 +119,8 @@ namespace CSCodeGen
 			DocumentationHelper.WriteLine(wr, "{", indentOffset);
 			indentOffset++;
 			bool previous = false;
-			if (Enums.Count > 0)
-			{
-				DocumentationHelper.WriteRegionStart(wr, "Enumerations", indentOffset);
-				Enums.Sort();
-				for (int i = 0; i < Enums.Count; i++)
-				{
-					Enums[i].Write(wr, indentOffset);
-					if (i != Enums.Count - 1)
-						DocumentationHelper.WriteLine(wr);
-				}
-				DocumentationHelper.WriteRegionEnd(wr, "Enumerations", indentOffset);
-				previous = true;
-			}
-
 			if (ChildClasses.Length > 0)
 			{
-				if (previous)
-					DocumentationHelper.WriteLine(wr);
 				DocumentationHelper.WriteRegionStart(wr, "Classes", indentOffset);
 
 				List<ClassInfo> childList = new List<ClassInfo>(ChildClasses);
@@ -148,6 +132,22 @@ namespace CSCodeGen
 						DocumentationHelper.WriteLine(wr);
 				}
 				DocumentationHelper.WriteRegionEnd(wr, "Classes", indentOffset);
+				previous = true;
+			}
+
+			if (Enums.Count > 0)
+			{
+				if (previous)
+					DocumentationHelper.WriteLine(wr);
+				DocumentationHelper.WriteRegionStart(wr, "Enumerations", indentOffset);
+				Enums.Sort();
+				for (int i = 0; i < Enums.Count; i++)
+				{
+					Enums[i].Write(wr, indentOffset);
+					if (i != Enums.Count - 1)
+						DocumentationHelper.WriteLine(wr);
+				}
+				DocumentationHelper.WriteRegionEnd(wr, "Enumerations", indentOffset);
 				previous = true;
 			}
 
