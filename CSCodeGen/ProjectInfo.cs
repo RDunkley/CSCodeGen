@@ -250,7 +250,7 @@ namespace CSCodeGen
 			method.CodeLines.Add("this.PerformLayout();");
 			info.Methods.Add(method);
 
-			FileInfo designerFile = new FileInfo(nameSpace, info, relativePath, description, "designer");
+			FileInfo designerFile = new FileInfo(nameSpace, info, relativePath, description, "Designer");
 
 			// Add the files with the designer dependency.
 			Files.Add(new ProjectFile(userFile, "UserControl", null));
