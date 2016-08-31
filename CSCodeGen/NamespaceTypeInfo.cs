@@ -20,6 +20,15 @@ namespace CSCodeGen
 	/// </summary>
 	public abstract class NamespaceTypeInfo : BaseTypeInfo
 	{
+		#region Fields
+
+		/// <summary>
+		///   Tracks the usings associated with the class.
+		/// </summary>
+		private List<string> mUsingList = new List<string>();
+
+		#endregion Fields
+
 		#region Properties
 
 		/// <summary>
@@ -30,7 +39,13 @@ namespace CSCodeGen
 		/// <summary>
 		///   List of required usings for the class. Initialized to the default for Visual Studio.
 		/// </summary>
-		public string[] Usings { get; private set; }
+		public string[] Usings
+		{
+			get
+			{
+				return mUsingList.ToArray();
+			}
+		}
 
 		#endregion Properties
 
@@ -49,7 +64,6 @@ namespace CSCodeGen
 		public NamespaceTypeInfo(string access, string name, string summary, string baseString = null, string remarks = null) : base(access, name, summary, remarks)
 		{
 			Base = baseString;
-			Usings = new string[0];
 		}
 
 		/// <summary>
@@ -58,19 +72,16 @@ namespace CSCodeGen
 		/// <param name="usings">Array of usings to be added.</param>
 		public void AddUsings(string[] usings)
 		{
-			List<string> usingList = new List<string>(Usings.Length);
-			usingList.AddRange(Usings);
-
 			// Add any usings that are not duplicates.
 			foreach(string usingString in usings)
 			{
-				if (!usingList.Contains(usingString))
-					usingList.Add(usingString);
+				if (!mUsingList.Contains(usingString))
+					mUsingList.Add(usingString);
 			}
 
-			if(usingList.Count > 0)
-				usingList.Sort();
-			Usings = usingList.ToArray();
+			// Sort the using list.
+			if(mUsingList.Count > 0)
+				mUsingList.Sort();
 		}
 
 		/// <summary>
@@ -79,15 +90,30 @@ namespace CSCodeGen
 		/// <param name="usingString">Using string to be added.</param>
 		public void AddUsing(string usingString)
 		{
-			List<string> usingList = new List<string>(Usings.Length);
-			usingList.AddRange(Usings);
-
-			if (usingList.Contains(usingString))
+			if (mUsingList.Contains(usingString))
 				return;
 
-			usingList.Add(usingString);
-			usingList.Sort();
-			Usings = usingList.ToArray();
+			mUsingList.Add(usingString);
+
+			// Sort the using list.
+			if (mUsingList.Count > 0)
+				mUsingList.Sort();
+		}
+
+		/// <summary>
+		///   Remove the specified using from this <see cref="NamespaceTypeInfo"/> object.
+		/// </summary>
+		/// <param name="usingString">Using string to be removed.</param>
+		public void RemoveUsing(string usingString)
+		{
+			if (!mUsingList.Contains(usingString))
+				return;
+
+			mUsingList.Remove(usingString);
+
+			// Sort the using list.
+			if (mUsingList.Count > 0)
+				mUsingList.Sort();
 		}
 
 		#endregion Methods
