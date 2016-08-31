@@ -195,7 +195,7 @@ namespace CSCodeGen
 
 			// Add the dispose method.
 			MethodInfo method = new MethodInfo("protected override", "void", "Dispose", "Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.");
-			method.Parameters.Add(new ParameterInfo("disposing", "bool", "True if managed resources should be disposed; otherwise false.", null, null));
+			method.Parameters.Add(new ParameterInfo("bool", "disposing", "True if managed resources should be disposed; otherwise false.", null, null));
 			method.CodeLines.Add("if(disposing && (components != null))");
 			method.CodeLines.Add("{");
 			method.CodeLines.Add("	components.Dispose();");
