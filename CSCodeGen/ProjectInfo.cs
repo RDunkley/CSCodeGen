@@ -188,6 +188,13 @@ namespace CSCodeGen
 			// Create a new class to use as the designer portion.
 			ClassInfo info = new ClassInfo("partial", userClass.Name, null, userClass.Summary, userClass.Remarks);
 
+			// Remove the default usings that Visual Studio adds.
+			info.RemoveUsing("System");
+			info.RemoveUsing("System.Collections.Generic");
+			info.RemoveUsing("System.Linq");
+			info.RemoveUsing("System.Text");
+			info.RemoveUsing("System.Threading.Tasks");
+
 			// Add a field for each component.
 			info.Fields.Add(new FieldInfo("private", "System.ComponentModel.IContainer", "components", "Required designer variable.", null, "null"));
 			foreach (GuiComponentInfo component in designer.Components)
