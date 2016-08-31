@@ -114,12 +114,12 @@ namespace CSCodeGen
 			else
 			{
 				ApplicationName = entry.GetName().Name;
-				ApplicationVersion = entry.GetName().Version.ToString();
+				ApplicationVersion = entry.GetName().Version.ToString(3);
 			}
 
 			AssemblyName library = Assembly.GetExecutingAssembly().GetName();
 			LibraryName = library.Name;
-			LibraryVersion = library.Version.ToString();
+			LibraryVersion = library.Version.ToString(3);
 
 			CompanyName = "Specify your company name here by setting CSCodeGen.DefaultValues.CompanyName property";
 			Developer = "Specify your developer name here by setting CSCodeGen.DefaultValues.Developer property";
