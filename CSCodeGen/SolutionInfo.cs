@@ -120,7 +120,7 @@ namespace CSCodeGen
 
 				foreach (ProjectInfo proj in Projects)
 				{
-					wr.WriteLine(string.Format("Project(\"{0}\") = \"{1}\", \"{1}\", \"{2}\"", ProjectInfo.GetProjectTypeGuid(proj.Type), Path.Combine(proj.RelativePath, proj.ProjectFileName), proj.Guid.ToString("B").ToUpper()));
+					wr.WriteLine(string.Format("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"", ProjectInfo.GetProjectTypeGuid(proj.Type), proj.Name, Path.Combine(proj.RelativePath, proj.ProjectFileName), proj.Guid.ToString("B").ToUpper()));
 					if (ProjectDependencies.ContainsKey(proj))
 					{
 						wr.WriteLine("	ProjectSection(ProjectDependencies) = postProject");
