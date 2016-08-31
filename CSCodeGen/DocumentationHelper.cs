@@ -650,7 +650,7 @@ namespace CSCodeGen
 				throw new ArgumentNullException("summary");
 			summary = summary.Trim();
 			if (summary.Length == 0)
-				throw new ArgumentException("summary is an emtpy string");
+				throw new ArgumentException("summary is an empty string");
 			if (indentOffset < 0)
 				indentOffset = 0;
 
