@@ -121,7 +121,7 @@ namespace CSCodeGen
 			bool previous = false;
 			if (Enums.Count > 0)
 			{
-				DocumentationHelper.WriteRegionStart(wr, "Enums", indentOffset);
+				DocumentationHelper.WriteRegionStart(wr, "Enumerations", indentOffset);
 				Enums.Sort();
 				for (int i = 0; i < Enums.Count; i++)
 				{
@@ -129,7 +129,7 @@ namespace CSCodeGen
 					if (i != Enums.Count - 1)
 						DocumentationHelper.WriteLine(wr);
 				}
-				DocumentationHelper.WriteRegionEnd(wr, "Enums", indentOffset);
+				DocumentationHelper.WriteRegionEnd(wr, "Enumerations", indentOffset);
 				previous = true;
 			}
 

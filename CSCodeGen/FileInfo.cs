@@ -217,7 +217,7 @@ namespace CSCodeGen
 				}
 				if (classInfo.Enums.Count > 0)
 				{
-					MaxStringLength("Enums", ref numCharsForType);
+					MaxStringLength("Enumerations", ref numCharsForType);
 					foreach (EnumInfo info in classInfo.Enums)
 						MaxStringLength(info.Name, ref numCharsForName);
 				}
@@ -272,7 +272,7 @@ namespace CSCodeGen
 				if (classInfo.Enums.Count > 0)
 				{
 					DocumentationHelper.WriteLine(wr, "// ", 0);
-					DocumentationHelper.WriteLine(wr, "//   Enums:", 0);
+					DocumentationHelper.WriteLine(wr, "//   Enumerations:", 0);
 					classInfo.Enums.Sort();
 					foreach (EnumInfo info in classInfo.Enums)
 					{
