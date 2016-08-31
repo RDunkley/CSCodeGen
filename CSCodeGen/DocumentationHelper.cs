@@ -354,48 +354,25 @@ namespace CSCodeGen
 			if (fileName.Length == 0)
 				throw new ArgumentException("fileName is an empty string");
 
-			bool somethingWritten = false;
-
 			// Write the file information section.
 			if (DefaultValues.FileInfoTemplate != null && DefaultValues.FileInfoTemplate.Length > 0)
 			{
-				WriteFlowerLine(wr, 0);
 				foreach (string templateLine in DefaultValues.FileInfoTemplate)
 					WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(templateLine, fileName, description)), 0);
-				somethingWritten = true;
 			}
 
 			// Write the copyright statement section.
-			bool hasCopyright = false;
 			if (DefaultValues.CopyrightTemplate != null && DefaultValues.CopyrightTemplate.Length > 0)
 			{
-				if (!WriteFlowerLine(wr, 0))
-					WriteLine(wr, "//", 0);
 				foreach (string line in DefaultValues.CopyrightTemplate)
 					WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(line, fileName, description)), 0);
-				hasCopyright = true;
 			}
 
 			if(DefaultValues.LicenseTemplate != null && DefaultValues.LicenseTemplate.Length > 0)
 			{
-				if (!hasCopyright)
-				{
-					if (!WriteFlowerLine(wr, 0))
-						WriteLine(wr, "//", 0);
-				}
-				else
-				{
-					WriteLine(wr, "//", 0);
-				}
-
 				foreach (string line in DefaultValues.LicenseTemplate)
 					WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(line, fileName, description)), 0);
-				somethingWritten = true;
 			}
-
-			// If nothing was written then don't bother with the closing flower text.
-			if(somethingWritten)
-				WriteFlowerLine(wr, 0);
 		}
 
 		/// <summary>
