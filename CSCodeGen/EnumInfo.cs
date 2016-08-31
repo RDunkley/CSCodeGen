@@ -72,7 +72,7 @@ namespace CSCodeGen
 			else
 				DocumentationHelper.WriteLine(wr, string.Format("{0} enum {1}", Access, Name), indentOffset);
 			DocumentationHelper.WriteLine(wr, "{", indentOffset);
-			DocumentationHelper.WriteRegionStart(wr, "Enumerations", indentOffset + 1);
+			DocumentationHelper.WriteRegionStart(wr, "Names", indentOffset + 1);
 
 			// Write out each value in the enumeration.
 			for(int i = 0; i < Values.Count; i++)
@@ -82,7 +82,7 @@ namespace CSCodeGen
 					wr.WriteLine();
 			}
 
-			DocumentationHelper.WriteRegionEnd(wr, "Enumerations", indentOffset + 1);
+			DocumentationHelper.WriteRegionEnd(wr, "Names", indentOffset + 1);
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
 		}
 
