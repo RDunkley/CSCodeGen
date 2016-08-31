@@ -423,7 +423,7 @@ namespace CSCodeGen
 
 			// Generate the assemby info file if it exists.
 			if (AssemblyInformation != null)
-				AssemblyInformation.WriteToFile(fullFolderPath);
+				AssemblyInformation.WriteToFile(Path.Combine(fullFolderPath, "Properties"));
 
 			// Write the project file.
 			WriteToFile(rootFolder);
