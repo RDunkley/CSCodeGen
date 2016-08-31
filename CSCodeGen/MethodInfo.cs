@@ -143,6 +143,41 @@ namespace CSCodeGen
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
 		}
 
+		/// <summary>
+		///   Compares a <see cref="MethodInfo"/> object with this object and returns an integer that indicates their relative position in the sort order.
+		/// </summary>
+		/// <param name="other">Other <see cref="MethodInfo"/> object to compare this object to.</param>
+		/// <returns>
+		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object preceeds 
+		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
+		/// </returns>
+		public int CompareTo(MethodInfo other)
+		{
+			int compare = string.Compare(this.Name, other.Name);
+
+			if (compare != 0)
+				return compare;
+
+			int compareLength = this.Parameters.Count;
+			if (other.Parameters.Count < compareLength)
+				compareLength = other.Parameters.Count;
+
+			// Compare the parameters.
+			for(int i = 0; i < compareLength; i++)
+			{
+				compare = string.Compare(this.Parameters[i].Name, other.Parameters[i].Name);
+				if (compare != 0)
+					return compare;
+			}
+
+			// Check if any have more parameters than the other.
+			if (this.Parameters.Count > compareLength)
+				return 1;
+			if (other.Parameters.Count > compareLength)
+				return -1;
+			return 0; // This should never happen since it means they have the same signature.
+		}
+
 		#endregion Methods
 	}
 }
