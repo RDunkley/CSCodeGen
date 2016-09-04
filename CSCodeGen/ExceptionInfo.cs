@@ -18,7 +18,7 @@ namespace CSCodeGen
 	/// <summary>
 	///   Contains all the information about an exception that could be thrown from a method/property.
 	/// </summary>
-	public class ExceptionInfo
+	public class ExceptionInfo : IComparable<ExceptionInfo>
 	{
 		#region Properties
 
@@ -55,6 +55,21 @@ namespace CSCodeGen
 				throw new ArgumentException("description is an empty string");
 			Type = type;
 			Description = description;
+		}
+
+		/// <summary>
+		///   Compares the current instance with another object of the same type and returns an integer that indicates whether
+		///   the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+		/// </summary>
+		/// <param name="obj">Another <see cref="ExceptionInfo"/> object to compare with this instance.</param>
+		/// <returns>
+		///   A value that indicates the relative order of the objects being compared. The return value has these meanings:
+		///   Value Meaning Less than zero This instance is less than <paramref name="obj" />. Zero This instance is equal
+		///   to <paramref name="obj" />. Greater than zero This instance is greater than <paramref name="obj" />.
+		/// </returns>
+		public int CompareTo(ExceptionInfo obj)
+		{
+			return string.Compare(this.Type, obj.Type);
 		}
 
 		#endregion Methods

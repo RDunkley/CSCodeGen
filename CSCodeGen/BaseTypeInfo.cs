@@ -33,14 +33,20 @@ namespace CSCodeGen
 		public string Name { get; protected set; }
 
 		/// <summary>
-		///   Specifies the documentation summary that will be generated with the type.
+		///   Summary provided in an overloads section.
 		/// </summary>
-		public string Summary { get; protected set; }
+		/// <remarks>A summary should be provided if this is the first method in a group of overloads. Can be null.</remarks>
+		public string OverloadedSummary { get; set; }
 
 		/// <summary>
 		///   Specifies the documentation remarks that will be generated with the type.
 		/// </summary>
 		public string Remarks { get; set; }
+
+		/// <summary>
+		///   Specifies the documentation summary that will be generated with the type.
+		/// </summary>
+		public string Summary { get; protected set; }
 
 		#endregion Properties
 

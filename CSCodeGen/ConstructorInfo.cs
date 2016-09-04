@@ -21,7 +21,7 @@ namespace CSCodeGen
 	/// <summary>
 	///   Represents the information in a C# constructor.
 	/// </summary>
-	public class ConstructorInfo : BaseTypeInfo
+	public class ConstructorInfo : BaseTypeInfo, IComparable<ConstructorInfo>
 	{
 		#region Properties
 
@@ -69,7 +69,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Writes the constructor to the <see cref="StreamWriter"/> object.
 		/// </summary>
-		/// <param name="wr"><see cref="StreamWriter"/> ojbect to write the code to.</param>
+		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
 		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
@@ -78,7 +78,7 @@ namespace CSCodeGen
 			if (wr == null)
 				throw new ArgumentNullException("wr");
 
-			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset, Remarks, null, Parameters.ToArray(), Exceptions.ToArray());
+			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset, Remarks, null, Parameters.ToArray(), Exceptions.ToArray(), OverloadedSummary);
 
 			// Write the signature.
 			StringBuilder sb = new StringBuilder();
@@ -151,6 +151,50 @@ namespace CSCodeGen
 
 			indentOffset--;
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
+		}
+
+		/// <summary>
+		///   Compares a <see cref="ConstructorInfo"/> object with this object and returns an integer that indicates their
+		///   relative position in the sort order.
+		/// </summary>
+		/// <param name="other">Other <see cref="ConstructorInfo"/> object to compare this object to.</param>
+		/// <returns>
+		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero,
+		///   this object proceeds <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is
+		///   after <i>other</i> in the sort order.
+		/// </returns>
+		/// <remarks>This method sorts the constructors using the same means that Visual Studio does.</remarks>
+		public int CompareTo(ConstructorInfo other)
+		{
+			int compare = string.Compare(this.Name, other.Name);
+
+			if(compare != 0)
+				return compare;
+
+			int compareLength = this.Parameters.Count;
+			if(other.Parameters.Count < compareLength)
+				compareLength = other.Parameters.Count;
+
+			// Compare the parameters.
+			for(int i = 0; i < compareLength; i++)
+			{
+				// Compare the type first.
+				compare = string.Compare(this.Parameters[i].Type, other.Parameters[i].Type);
+				if(compare != 0)
+					return compare;
+
+				// Compare the parameter name next.
+				compare = string.Compare(this.Parameters[i].Name, other.Parameters[i].Name);
+				if(compare != 0)
+					return compare;
+			}
+
+			// Check if any have more parameters than the other.
+			if(this.Parameters.Count > compareLength)
+				return 1;
+			if(other.Parameters.Count > compareLength)
+				return -1;
+			return 0;
 		}
 
 		#endregion Methods

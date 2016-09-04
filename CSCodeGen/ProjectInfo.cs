@@ -298,10 +298,10 @@ namespace CSCodeGen
 			// Convert absolute debug and release paths to relative.
 			string debugPath = DebugPath;
 			if (Path.IsPathRooted(debugPath))
-				debugPath = ConvertAbsolutePathToRelative(debugPath, fullFolderPath);
+				debugPath = StringUtility.ConvertAbsolutePathToRelative(debugPath, fullFolderPath);
 			string releasePath = ReleasePath;
 			if (Path.IsPathRooted(releasePath))
-				releasePath = ConvertAbsolutePathToRelative(releasePath, fullFolderPath);
+				releasePath = StringUtility.ConvertAbsolutePathToRelative(releasePath, fullFolderPath);
 
 			string path = Path.Combine(fullFolderPath, ProjectFileName);
 			using (StreamWriter sw = new StreamWriter(path))
@@ -434,21 +434,6 @@ namespace CSCodeGen
 
 			// Write the project file.
 			WriteToFile(rootFolder);
-		}
-
-		/// <summary>
-		///   Converts an absolute path to a relative one.
-		/// </summary>
-		/// <param name="absolutePath">Absolute path to be converted.</param>
-		/// <param name="reference">The reference folder to generate the relative path from.</param>
-		/// <returns>Relative path from the reference.</returns>
-		private string ConvertAbsolutePathToRelative(string absolutePath, string reference)
-		{
-			if (reference[reference.Length - 1] != '\\')
-				reference = string.Format("{0}\\", reference);
-			Uri pathUri = new Uri(absolutePath);
-			Uri referenceUri = new Uri(reference);
-			return referenceUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar);
 		}
 
 		/// <summary>

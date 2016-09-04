@@ -111,7 +111,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Writes the property to the <see cref="StreamWriter"/> object.
 		/// </summary>
-		/// <param name="wr"><see cref="StreamWriter"/> ojbect to write the property to.</param>
+		/// <param name="wr"><see cref="StreamWriter"/> object to write the property to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
 		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>

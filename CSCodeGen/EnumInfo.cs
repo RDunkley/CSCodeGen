@@ -51,7 +51,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Writes the enumeration to the <see cref="StreamWriter"/> object.
 		/// </summary>
-		/// <param name="wr"><see cref="StreamWriter"/> ojbect to write the code to.</param>
+		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
 		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
 		/// <exception cref="InvalidOperationException"><see cref="Values"/> array is null or empty.</exception>

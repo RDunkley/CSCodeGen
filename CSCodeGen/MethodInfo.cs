@@ -21,7 +21,7 @@ namespace CSCodeGen
 	/// <summary>
 	///   Represents the information in a C# Method.
 	/// </summary>
-	public class MethodInfo : BaseTypeInfo
+	public class MethodInfo : BaseTypeInfo, IComparable<MethodInfo>
 	{
 		#region Properties
 
@@ -93,7 +93,7 @@ namespace CSCodeGen
 			if (indentOffset < 0)
 				indentOffset = 0;
 
-			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset, Remarks, ReturnTypeDescription, Parameters.ToArray(), Exceptions.ToArray());
+			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset, Remarks, ReturnTypeDescription, Parameters.ToArray(), Exceptions.ToArray(), OverloadedSummary);
 
 			// Write the signature.
 			StringBuilder sb = new StringBuilder();
@@ -148,7 +148,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="other">Other <see cref="MethodInfo"/> object to compare this object to.</param>
 		/// <returns>
-		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object preceeds 
+		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object proceeds 
 		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
 		/// </returns>
 		public int CompareTo(MethodInfo other)
@@ -165,6 +165,12 @@ namespace CSCodeGen
 			// Compare the parameters.
 			for(int i = 0; i < compareLength; i++)
 			{
+				// Compare the type first.
+				compare = string.Compare(this.Parameters[i].Type, other.Parameters[i].Type);
+				if(compare != 0)
+					return compare;
+
+				// Compare the parameter name next.
 				compare = string.Compare(this.Parameters[i].Name, other.Parameters[i].Name);
 				if (compare != 0)
 					return compare;
@@ -175,7 +181,7 @@ namespace CSCodeGen
 				return 1;
 			if (other.Parameters.Count > compareLength)
 				return -1;
-			return 0; // This should never happen since it means they have the same signature.
+			return 0;
 		}
 
 		#endregion Methods

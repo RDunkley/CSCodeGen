@@ -358,7 +358,7 @@ namespace CSCodeGen
 			if (DefaultValues.FileInfoTemplate != null && DefaultValues.FileInfoTemplate.Length > 0)
 			{
 				foreach (string templateLine in DefaultValues.FileInfoTemplate)
-					WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(templateLine, fileName, description)), 0);
+					WriteLine(wr, ConvertTemplateLineToActual(templateLine, fileName, description), 0);
 			}
 
 			// Write the copyright statement section.
@@ -539,6 +539,96 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
+		///   Creates documentation elements that are wrapped inside another element.
+		/// </summary>
+		/// <param name="wr"><see cref="StreamWriter"/> object to write the documentation to.</param>
+		/// <param name="wrapTag">Element to incompass the elements in the <i>tagTextLookup</i>.</param>
+		/// <param name="tagTextLookup">
+		///   Lookup table containing the tags to place inside the parenet element. Keys are the element names, and values are the text inside.
+		/// </param>
+		/// <param name="indentOffset">Number of indentations, before the code/comments start.</param>
+		/// <remarks>
+		///   This method is used to generate documentation like the overloads section, which contains standard elements inside another element.
+		/// </remarks>
+		private static void WriteWrappedDocumentationElements(StreamWriter wr, string wrapTag, Dictionary<string, string> tagTextLookup, int indentOffset)
+		{
+			wrapTag = wrapTag.Trim();
+			int wsLength;
+			string ws = GenerateLeadingWhitespace(indentOffset, out wsLength);
+			string newLine = "///   ";
+
+			if(tagTextLookup.Count > 1)
+			{
+				wr.WriteLine(string.Format("{0}/// <{1}>", ws, wrapTag));
+				wr.Write(ws);
+				wr.Write(newLine);
+			}
+
+			int index = 0;
+			foreach(string key in tagTextLookup.Keys)
+			{
+				if(tagTextLookup.Count == 1)
+				{
+					// The 14 below is for the '/// <><></></>' characters.
+					if (tagTextLookup[key].Length + wsLength + (2 * wrapTag.Length) + (2 * key.Length) + 14 > DefaultValues.NumCharactersPerLine)
+					{
+						// Place the tags on a separate line.
+						wr.WriteLine(string.Format("{0}/// <{1}>", ws, wrapTag));
+						wr.Write(ws);
+						wr.Write(newLine);
+
+						// The 11 below is for the '///   <></>' characters.
+						if(tagTextLookup[key].Length + wsLength + (2 * key.Length) + 11 > DefaultValues.NumCharactersPerLine)
+						{
+							// Place the tags on a separate line.
+							string subNewLine = "///     ";
+							wr.WriteLine(string.Format("{0}///   <{1}>", ws, key));
+							wr.Write(ws);
+							wr.WriteLine(subNewLine);
+							AddCommentToEndOfLine(wr, tagTextLookup[key], subNewLine.Length, indentOffset, subNewLine);
+							wr.WriteLine(string.Format("{0}///   </{1}>", ws, key));
+						}
+						else
+						{
+							// Place on the same line.
+							wr.WriteLine(string.Format("{0}///   <{1}>{2}</{1}>", ws, key, tagTextLookup[key]));
+						}
+						wr.WriteLine(string.Format("{0}/// </{1}>", ws, wrapTag));
+					}
+					else
+					{
+						// Place on the same line.
+						wr.WriteLine(string.Format("{0}/// <{1}><{2}>{3}</{2}></{1}>", ws, wrapTag, key, tagTextLookup[key]));
+					}
+				}
+				else
+				{
+					// The 11 below is for the '///   <></>' characters.
+					if(tagTextLookup[key].Length + wsLength + (2 * key.Length) + 11 > DefaultValues.NumCharactersPerLine)
+					{
+						// Place the tags on a separate line.
+						string subNewLine = "///     ";
+						wr.WriteLine(string.Format("{0}///   <{1}>", ws, key));
+						wr.Write(ws);
+						wr.WriteLine(subNewLine);
+						AddCommentToEndOfLine(wr, tagTextLookup[key], subNewLine.Length, indentOffset, subNewLine);
+						wr.WriteLine(string.Format("{0}///   </{1}>", ws, key));
+					}
+					else
+					{
+						// Place on the same line.
+						wr.WriteLine(string.Format("{0}///   <{1}>{2}</{1}>", ws, key, tagTextLookup[key]));
+					}
+					if(index != tagTextLookup.Count - 1)
+						wr.WriteLine(string.Format("{0}///", ws)); // Add a space between items.
+				}
+				index++;
+			}
+			if(tagTextLookup.Count > 1)
+				wr.WriteLine(string.Format("{0}/// </{1}>", ws, wrapTag));
+		}
+
+		/// <summary>
 		///   Creates a parameter documentation XML element.
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the documentation to.</param>
@@ -619,7 +709,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentNullException"><i>wr</i>, or <i>summary</i> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><i>summary</i> is an empty string.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
-		public static void WriteComponentHeader(StreamWriter wr, string summary, int indentOffset, string remarks = null, string returns = null, ParameterInfo[] parameters = null, ExceptionInfo[] exceptions = null)
+		public static void WriteComponentHeader(StreamWriter wr, string summary, int indentOffset, string remarks = null, string returns = null, ParameterInfo[] parameters = null, ExceptionInfo[] exceptions = null, string overloadedSummary = null)
 		{
 			if (wr == null)
 				throw new ArgumentNullException("wr");
@@ -632,6 +722,14 @@ namespace CSCodeGen
 				indentOffset = 0;
 
 			WriteFlowerLine(wr, indentOffset);
+			if(overloadedSummary != null && overloadedSummary.Length > 0)
+			{
+				Dictionary<string, string> lookup = new Dictionary<string,string>(1);
+				lookup.Add("summary", overloadedSummary);
+				WriteWrappedDocumentationElements(wr, "overloads", lookup, indentOffset);
+				WriteLine(wr, "///", indentOffset);
+			}
+
 			WriteGeneralDocumentationElement(wr, "summary", summary, indentOffset);
 
 			if (parameters != null && parameters.Length > 0)
@@ -675,8 +773,9 @@ namespace CSCodeGen
 				}
 			}
 
-			if (nullList.Count > 0 || emptyList.Count > 0 || (exceptions != null && exceptions.Length > 0))
-				WriteLine(wr, "///", indentOffset);
+			List<ExceptionInfo> exceptionList = new List<ExceptionInfo>();
+			if(exceptions != null && exceptions.Length > 0)
+				exceptionList.AddRange(exceptions);
 
 			if (nullList.Count > 0)
 			{
@@ -692,7 +791,7 @@ namespace CSCodeGen
 						sb.Append(", ");
 				}
 				sb.Append("is a null reference.");
-				WriteExceptionDocumentationElement(wr, "ArgumentNullException", sb.ToString(), indentOffset);
+				exceptionList.Add(new ExceptionInfo("ArgumentNullException", sb.ToString()));
 			}
 
 			if (emptyList.Count > 0)
@@ -709,12 +808,15 @@ namespace CSCodeGen
 						sb.Append(", ");
 				}
 				sb.Append("is an empty array.");
-				WriteExceptionDocumentationElement(wr, "ArgumentException", sb.ToString(), indentOffset);
+				exceptionList.Add(new ExceptionInfo("ArgumentException", sb.ToString()));
 			}
 
-			if (exceptions != null && exceptions.Length > 0)
+			if (exceptionList.Count > 0)
 			{
-				foreach (ExceptionInfo exception in exceptions)
+				WriteLine(wr, "///", indentOffset);
+
+				exceptionList.Sort();
+				foreach (ExceptionInfo exception in exceptionList)
 					WriteExceptionDocumentationElement(wr, exception.Type, exception.Description, indentOffset);
 			}
 			WriteFlowerLine(wr, indentOffset);

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.IO;
 
 namespace CSCodeGen
 {
@@ -95,6 +96,21 @@ namespace CSCodeGen
 			}
 
 			return value;
+		}
+
+		/// <summary>
+		///   Converts an absolute path to a relative one.
+		/// </summary>
+		/// <param name="absolutePath">Absolute path to be converted.</param>
+		/// <param name="reference">The reference folder to generate the relative path from.</param>
+		/// <returns>Relative path from the reference.</returns>
+		public static string ConvertAbsolutePathToRelative(string absolutePath, string reference)
+		{
+			if(reference[reference.Length - 1] != '\\')
+				reference = string.Format("{0}\\", reference);
+			Uri pathUri = new Uri(absolutePath);
+			Uri referenceUri = new Uri(reference);
+			return referenceUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar);
 		}
 
 		/// <summary>
