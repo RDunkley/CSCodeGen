@@ -81,35 +81,7 @@ namespace CSCodeGen
 			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset, Remarks, null, Parameters.ToArray(), Exceptions.ToArray(), OverloadedSummary);
 
 			// Write the signature.
-			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("{0} {1}(", Access, Name);
-			int index = 0;
-			foreach(ParameterInfo param in Parameters)
-			{
-				sb.AppendFormat("{0} {1}", param.Type, param.Name);
-				if (index < Parameters.Count - 1)
-					sb.Append(", ");
-				index++;
-			}
-			sb.Append(")");
-
-			// Add the base constructor parameters if needed.
-			if (BaseParameters.Count > 0)
-			{
-				sb.Append(" : base(");
-				SortedDictionary<int, ParameterInfo>.ValueCollection values = BaseParameters.Values;
-				int pIndex = 0;
-				foreach(ParameterInfo param in values)
-				{
-					sb.Append(param.Name);
-					if (pIndex < values.Count - 1)
-						sb.Append(", ");
-					pIndex++;
-				}
-				sb.Append(")");
-			}
-
-			DocumentationHelper.WriteLine(wr, sb.ToString(), indentOffset);
+			DocumentationHelper.WriteSignature(wr, indentOffset, Access, Name, null, Parameters.ToArray(), BaseParameters);
 			DocumentationHelper.WriteLine(wr, "{", indentOffset);
 			indentOffset++;
 

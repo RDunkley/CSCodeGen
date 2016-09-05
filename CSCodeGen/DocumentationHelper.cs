@@ -44,6 +44,90 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
+		///   Writes the signature of the method or constructor.
+		/// </summary>
+		/// <param name="wr"><see cref="StreamWriter"/> object to write the text to.</param>
+		/// <param name="indentOffset">Number of indentations to add to the text.</param>
+		/// <param name="access">Visibility or access of the method or constructor.</param>
+		/// <param name="name">Name of the method or constructor.</param>
+		/// <param name="returnType">Return type of the method, null for a constructor.</param>
+		/// <param name="parameters">List of <see cref="ParameterInfo"/> objects representing the parameters of the method. Can be null or empty.</param>
+		/// <param name="baseParameters">Lookup table of the base method's parameters. Can be null or empty.</param>
+		public static void WriteSignature(StreamWriter wr, int indentOffset, string access, string name, string returnType = null, ParameterInfo[] parameters = null, SortedDictionary<int, ParameterInfo> baseParameters = null)
+		{
+			if (wr == null)
+				throw new ArgumentNullException("wr");
+			if (indentOffset < 0)
+				throw new ArgumentException("indentOffset is less than 0");
+			if (access == null)
+				throw new ArgumentNullException("access");
+			if (access.Length == 0)
+				throw new ArgumentException("access is an empty string");
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if (name.Length == 0)
+				throw new ArgumentException("name is an empty string");
+			if (returnType != null && returnType.Length == 0)
+				throw new ArgumentException("returnType is an empty string");
+
+			// Write the signature.
+			StringBuilder sb = new StringBuilder();
+			int wsSize;
+			string ws = DocumentationHelper.GenerateLeadingWhitespace(indentOffset, out wsSize);
+			if(returnType == null)
+				sb.AppendFormat("{0} {1}(", access, name);
+			else
+				sb.AppendFormat("{0} {1} {2}(", access, returnType, name);
+			int index = 0;
+			int addedIndent = 0;
+			foreach (ParameterInfo param in parameters)
+			{
+				string nextPair = string.Format("{0} {1}", param.Type, param.Name);
+				if ((wsSize + sb.Length + nextPair.Length + 1) > DefaultValues.NumCharactersPerLine)
+				{
+					DocumentationHelper.WriteLine(wr, sb.ToString(), indentOffset + addedIndent);
+					addedIndent = 1;
+					sb.Clear();
+					ws = DocumentationHelper.GenerateLeadingWhitespace(indentOffset + addedIndent, out wsSize);
+				}
+				sb.AppendFormat(nextPair);
+				if (index < parameters.Length - 1)
+					sb.Append(", ");
+				index++;
+			}
+			sb.Append(")");
+
+			// Add the base constructor parameters if needed.
+			StringBuilder bb = new StringBuilder();
+			if (baseParameters != null && baseParameters.Count > 0)
+			{
+				bb.Append(" : base(");
+				SortedDictionary<int, ParameterInfo>.ValueCollection values = baseParameters.Values;
+				int pIndex = 0;
+				foreach (ParameterInfo param in values)
+				{
+					bb.Append(param.Name);
+					if (pIndex < values.Count - 1)
+						bb.Append(", ");
+					pIndex++;
+				}
+				bb.Append(")");
+			}
+
+			string baseString = bb.ToString();
+			if((wsSize + sb.Length + baseString.Length) > DefaultValues.NumCharactersPerLine)
+			{
+				DocumentationHelper.WriteLine(wr, sb.ToString(), indentOffset + addedIndent);
+				addedIndent = 1;
+				sb.Clear();
+				ws = DocumentationHelper.GenerateLeadingWhitespace(indentOffset + addedIndent, out wsSize);
+			}
+			sb.Append(baseString);
+
+			DocumentationHelper.WriteLine(wr, sb.ToString(), indentOffset + addedIndent);
+		}
+
+		/// <summary>
 		///   Generates a flower box text, based on the given number of indentations.
 		/// </summary>
 		/// <param name="indentOffset">Number of indentations before the flower box text begins.</param>
