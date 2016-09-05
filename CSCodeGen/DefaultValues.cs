@@ -57,6 +57,24 @@ namespace CSCodeGen
 		public static string Developer { get; set; }
 
 		/// <summary>
+		///   Path to the HTML Help 1.x version compiler.
+		/// </summary>
+		/// <remarks>The path is required to generate Sandcastle Help File Builder projects.</remarks>
+		public static string HtmlHelp1xCompilerPath { get; set; }
+
+		/// <summary>
+		///   Path to the HTML Help 2.x version compiler.
+		/// </summary>
+		/// <remarks>The path is required to generate Sandcastle Help File Builder projects.</remarks>
+		public static string HtmlHelp2xCompilerPath { get; set; }
+
+		/// <summary>
+		///   Path to the Sandcastle Help File Builder.
+		/// </summary>
+		/// <remarks>The path is required to generate Sandcastle Help File Builder projects.</remarks>
+		public static string SandcastlePath { get; set; }
+
+		/// <summary>
 		///   Flower box character to use for documentation. Can be null.
 		/// </summary>
 		public static char? FlowerBoxCharacter { get; set; }

@@ -21,24 +21,9 @@ namespace CSCodeGen
 	/// <summary>
 	///   Represents a Visual Studio Project file.
 	/// </summary>
-	public class ProjectInfo
+	public class ProjectInfo : BaseProject
 	{
 		#region Properties
-
-		/// <summary>
-		///   Type of project that this object represents.
-		/// </summary>
-		public ProjectType Type { get; private set; }
-
-		/// <summary>
-		///   GUID of the project.
-		/// </summary>
-		public Guid Guid { get; private set; }
-
-		/// <summary>
-		///   Name of the project. Also name of output assembly.
-		/// </summary>
-		public string Name { get; private set; }
 
 		/// <summary>
 		///   Debug path.
@@ -46,19 +31,9 @@ namespace CSCodeGen
 		public string DebugPath { get; set; }
 
 		/// <summary>
-		///   Name of the project file.
-		/// </summary>
-		public string ProjectFileName { get; private set; }
-
-		/// <summary>
 		///   Release path.
 		/// </summary>
 		public string ReleasePath { get; set; }
-
-		/// <summary>
-		///   Assemblies that are referenced by the project.
-		/// </summary>
-		public List<ProjectReferenceAssembly> References { get; set; }
 
 		/// <summary>
 		///   Files contained in the project.
@@ -69,21 +44,6 @@ namespace CSCodeGen
 		///   Information about the assembly.
 		/// </summary>
 		public AssemblyInfo AssemblyInformation { get; set; }
-
-		/// <summary>
-		///   Root namespace of the project.
-		/// </summary>
-		public string RootNamespace { get; set; }
-
-		/// <summary>
-		///   RelativePath where the project is represented.
-		/// </summary>
-		public string RelativePath { get; private set; }
-
-		/// <summary>
-		///   Visual Studio Version to create the project file as.
-		/// </summary>
-		public VisualStudioVersion Version { get; set; }
 
 		#endregion Properties
 
@@ -100,12 +60,8 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentNullException"><i>name</i>, <i>debugPath</i>,  or <i>releasePath</i> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><i>name</i>, <i>debugPath</i>, or <i>releasePath</i> is an empty string.</exception>
 		/// <exception cref="ArgumentException"><i>debugPath</i>, <i>releasePath</i>, or <i>relativePath</i> is not a valid path.</exception>
-		public ProjectInfo(string name, string debugPath, string releasePath, ProjectType type, string relativePath = null)
+		public ProjectInfo(string name, string debugPath, string releasePath, ProjectType type, string relativePath = null) : base(name, type, relativePath)
 		{
-			if (name == null)
-				throw new ArgumentNullException("name");
-			if (name.Length == 0)
-				throw new ArgumentException("name is an empty string");
 			if (debugPath == null)
 				throw new ArgumentNullException("debugPath");
 			if (debugPath.Length == 0)
@@ -115,23 +71,8 @@ namespace CSCodeGen
 			if (releasePath.Length == 0)
 				throw new ArgumentException("releasePath is an empty string");
 
-			if (relativePath == null)
-				relativePath = string.Empty;
-
-			if (relativePath.Length > 0)
-				if (Path.IsPathRooted(relativePath))
-					throw new ArgumentException("relativePath is rooted. It must be a relative path.");
-
 			DebugPath = debugPath;
 			ReleasePath = releasePath;
-			Guid = Guid.NewGuid();
-			Name = name;
-			ProjectFileName = string.Format("{0}.csproj", name);
-			Type = type;
-			RootNamespace = "CodeGen";
-			RelativePath = relativePath;
-			References = new List<ProjectReferenceAssembly>();
-			Version = VisualStudioVersion.VS2015;
 			Files = new List<ProjectFile>();
 		}
 
@@ -455,23 +396,9 @@ namespace CSCodeGen
 			}
 		}
 
-		/// <summary>
-		///   Returns the Visual Studio project type GUID.
-		/// </summary>
-		/// <param name="type"><see cref="ProjectType"/> enumerated type to determine the GUID from.</param>
-		/// <returns>GUID of the project type.</returns>
-		/// <exception cref="NotImplementedException">The specified project type is not supported.</exception>
-		public static string GetProjectTypeGuid(ProjectType type)
+		protected override string GetProjectFileExtension()
 		{
-			switch (type)
-			{
-				case ProjectType.Library:
-					return "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}";
-				case ProjectType.Exe:
-					return "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}";
-				default:
-					throw new NotImplementedException("The specified ProjectType is not supported.");
-			}
+			return "csproj";
 		}
 
 		#endregion Methods

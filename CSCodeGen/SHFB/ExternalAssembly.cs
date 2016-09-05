@@ -1,7 +1,8 @@
 ﻿//********************************************************************************************************************************
-// Filename:    ProjectType.cs
+// Filename:    ExternalAssembly.cs
 // Owner:       Richard Dunkley
-// Description: Contains the enumeration for a subset of the different C# project types.
+// Description: Contains the data structure representing external assemblies that Sandcastle Help File Builder will generate
+//              documentation for.
 //********************************************************************************************************************************
 // Copyright © Richard Dunkley 2016
 //
@@ -11,26 +12,32 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
-namespace CSCodeGen
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace CSCodeGen.SHFB
 {
-	/// <summary>
-	///   Enumerates the various Visual Studio Project types.
-	/// </summary>
-	public enum ProjectType
+	public class ExternalAssembly
 	{
-		/// <summary>
-		///   C# library.
-		/// </summary>
-		Library,
+		#region Properties
 
-		/// <summary>
-		///   C# Executable.
-		/// </summary>
-		Exe,
+		public string Name { get; set; }
+		public bool IsDocumented { get; set; }
+		public string Description { get; set; }
 
-		/// <summary>
-		///   Sandcastle Help File Builder project.
-		/// </summary>
-		SandcastleHelpFileBuilder,
+		#endregion Properties
+
+		#region Methods
+
+		public ExternalAssembly(string name, bool isDocumented, string description)
+		{
+			Name = name;
+			IsDocumented = isDocumented;
+			Description = description;
+		}
+
+		#endregion Methods
 	}
 }
