@@ -23,6 +23,8 @@ namespace CSCodeGen
 	/// </summary>
 	public static class DocumentationHelper
 	{
+		#region Methods
+
 		/// <summary>
 		///   Adds a comment string to the end of the text.
 		/// </summary>
@@ -903,5 +905,7 @@ namespace CSCodeGen
 			if(tagTextLookup.Count > 1)
 				wr.WriteLine(string.Format("{0}/// </{1}>", ws, wrapTag));
 		}
+
+		#endregion Methods
 	}
 }

@@ -24,6 +24,8 @@ namespace CSCodeGen
 	/// </summary>
 	public static class StringUtility
 	{
+		#region Methods
+
 		/// <summary>
 		///   Converts an absolute path to a relative one.
 		/// </summary>
@@ -350,5 +352,7 @@ namespace CSCodeGen
 
 			return builder.ToString();
 		}
+
+		#endregion Methods
 	}
 }

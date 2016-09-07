@@ -18,6 +18,8 @@ namespace CSCodeGen
 	/// </summary>
 	public enum VisualStudioVersion
 	{
+		#region Names
+
 		/// <summary>
 		///   Visual Studio 2010 (11.0).
 		/// </summary>
@@ -32,5 +34,7 @@ namespace CSCodeGen
 		///   Visual Studio 2015 (14.0).
 		/// </summary>
 		VS2015,
+
+		#endregion Names
 	}
 }

@@ -18,6 +18,8 @@ namespace CSCodeGen
 	/// </summary>
 	public enum ProjectType
 	{
+		#region Names
+
 		/// <summary>
 		///   C# Executable.
 		/// </summary>
@@ -32,5 +34,7 @@ namespace CSCodeGen
 		///   Sandcastle Help File Builder project.
 		/// </summary>
 		SandcastleHelpFileBuilder,
+
+		#endregion Names
 	}
 }
