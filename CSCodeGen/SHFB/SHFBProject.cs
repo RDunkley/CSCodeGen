@@ -13,8 +13,6 @@
 //********************************************************************************************************************************
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace CSCodeGen.SHFB
@@ -22,56 +20,118 @@ namespace CSCodeGen.SHFB
 	/// <summary>
 	///   Represents a Sandcastle Help File Builder Project.
 	/// </summary>
-	public class SHFBProjectInfo : BaseProject
+	public class SHFBProject : BaseProject
 	{
 		#region Properties
 
 		/// <summary>
-		///   Output Path.
+		///   Specifies the location of the content layout file relative to the project directory.
+		/// </summary>
+		public string ContentLayout { get; private set; }
+
+		/// <summary>
+		///   Gets or sets the additional message in the footer of each page. Can be null or empty.
+		/// </summary>
+		public string FooterText { get; set; }
+
+		/// <summary>
+		///   Gets or sets the additional message in the header of each page. Can be null or empty.
+		/// </summary>
+		public string HeaderText { get; set; }
+
+		/// <summary>
+		///   Gets or sets the title for the help file. This text will appear as the title of the help file's window.
+		/// </summary>
+		public string HelpTitle { get; set; }
+
+		/// <summary>
+		///   Contains an array of content groups. This allows custom item groups to be added to the project.
+		/// </summary>
+		public List<List<Content>> ItemGroups { get; private set; }
+
+		/// <summary>
+		///   Array of namespace summaries contained in the project.
+		/// </summary>
+		public List<NamespaceSummary> NamespaceSummaries { get; private set; }
+
+		/// <summary>
+		///   Specifies where the compiled help file should be placed.
 		/// </summary>
 		public string OutputPath { get; set; }
 
-		public string FooterText {get; set; }
-
-		public List<ExternalAssembly> NamespaceSummaries { get; private set; }
-
+		/// <summary>
+		///   This property is used to set the product title that appears in the help content setup file. If not set, the <see cref="HelpTitle"/> value will be used.
+		/// </summary>
 		public string ProductTitle { get; set; }
 
-		public string Vendor { get; set; }
-
-		public string Title {get; set;}
+		/// <summary>
+		///   Array of relative paths to projects to build the documentation for.
+		/// </summary>
+		public List<string> Projects { get; private set; }
 
 		/// <summary>
-		///   Array of <see cref="ProjectInfo"/> objects representing the projects to build documentation for.
+		///   Lookup table of transform component arguments to change reflection data, XML comments, and/or MAML topics to a format suitable for use in the resulting help file.
 		/// </summary>
-		public List<ProjectInfo> Projects { get; private set; }
-
-		public List<List<Content>> ItemGroups { get; private set; }
-
 		public Dictionary<string, string> TransformComponentArguments { get; private set; }
 
-		public string ContentLayout { get; private set; }
+		/// <summary>
+		///   This property is used to set the vendor name that appears in the help content setup file. If not set, a default value of "VendorName" will be used.
+		/// </summary>
+		public string Vendor { get; set; }
 
 		#endregion Properties
 
 		#region Methods
 
-		public SHFBProjectInfo(string name, string outputPath, string contentLayout, string relativePath = null) : base(name, ProjectType.SandcastleHelpFileBuilder, relativePath)
+		/// <summary>
+		///   Instantiates a new <see cref="SHFBProject"/> object.
+		/// </summary>
+		/// <param name="name">Name of the project.</param>
+		/// <param name="outputPath">Path to place the output in. Must be relative to the project path.</param>
+		/// <param name="contentLayout">Location of the content layout file relative to the project path.</param>
+		/// <param name="relativePath">Relative path of this project.</param>
+		/// <exception cref="ArgumentNullException"><i>name</i>, <i>outputPath</i>, or <i>contentLayout</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>name</i>, <i>outputPath</i>, or <i>contentLayout</i> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><i>relativePath</i> is not a valid path.</exception>
+		public SHFBProject(string name, string outputPath, string contentLayout, string relativePath = null) : base(name, ProjectType.SandcastleHelpFileBuilder, relativePath)
 		{
 			if(outputPath == null)
 				throw new ArgumentNullException("outputPath");
 			if(outputPath.Length == 0)
 				throw new ArgumentException("outputPath is an empty string");
 
+			if (contentLayout == null)
+				throw new ArgumentNullException("contentLayout");
+			if (contentLayout.Length == 0)
+				throw new ArgumentException("contentLayout is an empty string");
+
 			ContentLayout = contentLayout;
 			OutputPath = outputPath;
+			Projects = new List<string>();
 			References = new List<ProjectReferenceAssembly>();
-			NamespaceSummaries = new List<ExternalAssembly>();
+			NamespaceSummaries = new List<NamespaceSummary>();
 			ItemGroups = new List<List<Content>>();
 			TransformComponentArguments = new Dictionary<string, string>();
 		}
 
-		public void WriteFiles(string rootFolder)
+		/// <summary>
+		///   Gets the file extension for this project.
+		/// </summary>
+		/// <returns>'shfbproj' is the extension for Sandcastle Help File Builder projects.</returns>
+		protected override string GetProjectFileExtension()
+		{
+			return "shfbproj";
+		}
+
+		/// <summary>
+		///   Write the project information out to a file.
+		/// </summary>
+		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
+		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="InvalidOperationException">No C# projects have been added to <see cref="Projects"/>.</exception>
+		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
+		public override void WriteToFile(string rootFolder)
 		{
 			if(rootFolder == null)
 				throw new ArgumentNullException("rootFolder");
@@ -86,25 +146,26 @@ namespace CSCodeGen.SHFB
 				throw new ArgumentException("rootFolder is not a valid path (see inner exception).", e);
 			}
 
+			if(Projects.Count == 0)
+				throw new InvalidOperationException("An attempt was made to write the project information to a file, but no C# projects sources have been added to the Projects list. A documentation project must have at least one C# project.");
+
 			string fullFolderPath;
 			if(RelativePath.Length > 0)
 				fullFolderPath = Path.Combine(rootFolder, RelativePath);
 			else
 				fullFolderPath = rootFolder;
 
-			// Convert absolute debug and release paths to relative.
 			string outputPath = OutputPath;
 			if(Path.IsPathRooted(outputPath))
 				outputPath = StringUtility.ConvertAbsolutePathToRelative(outputPath, fullFolderPath);
 
-			// Write out the project file.
 			string path = Path.Combine(fullFolderPath, ProjectFileName);
 			using(StreamWriter sw = new StreamWriter(path))
 			{
 				sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
+				if(Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
 					sw.WriteLine("<Project ToolsVersion=\"4.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
-				else if (Version == VisualStudioVersion.VS2015)
+				else if(Version == VisualStudioVersion.VS2015)
 					sw.WriteLine("<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
 				else
 					throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
@@ -115,7 +176,7 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("		<SchemaVersion>2.0</SchemaVersion>");
 				sw.WriteLine("		<SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>");
 				sw.WriteLine("		<!-- User Defined properties -->");
-				sw.WriteLine("		<SolutionDirName>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)\\..\').Name)</SolutionDirName>");
+				sw.WriteLine("		<SolutionDirName>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)\\..\\').Name)</SolutionDirName>");
 				sw.WriteLine("		<!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual");
 				sw.WriteLine("		Studio adds them anyway -->");
 				sw.WriteLine("		<AssemblyName>Documentation</AssemblyName>");
@@ -125,8 +186,12 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("		<HelpFileVersion>$(Major).$(Minor).$(Build).$(Revision)</HelpFileVersion>");
 				sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", outputPath));
 				sw.WriteLine(string.Format("		<HtmlHelpName>{0}</HtmlHelpName>", Name));
+				if (HeaderText != null && HeaderText.Length > 0)
+					sw.WriteLine(string.Format("		<HeaderText>{0}</HeaderText>", HeaderText));
 				if(FooterText != null && FooterText.Length > 0)
 					sw.WriteLine(string.Format("		<FooterText>{0}</FooterText>", FooterText));
+				if (DefaultValues.CopyrightTemplate != null && DefaultValues.CopyrightTemplate.Length > 0)
+					sw.WriteLine(string.Format("		<CopyrightText>{0}</CopyrightText>", DocumentationHelper.ConvertTemplateLineToActual(DefaultValues.CopyrightTemplate, null, null, true)));
 				sw.WriteLine("		<ProjectSummary>");
 				sw.WriteLine("		</ProjectSummary>");
 				sw.WriteLine("		<MissingTags>None</MissingTags>");
@@ -139,18 +204,18 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("		<BuildLogFile>");
 				sw.WriteLine("		</BuildLogFile>");
 				sw.WriteLine("		<HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>");
-				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
-					sw.WriteLine("		<FrameworkVersion>v4.0</FrameworkVersion>");
+				if(Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
+					sw.WriteLine("		<FrameworkVersion>.NET Framework 4.0</FrameworkVersion>");
 				else if(Version == VisualStudioVersion.VS2015)
-					sw.WriteLine("		<FrameworkVersion>v4.5.2</FrameworkVersion>");
+					sw.WriteLine("		<FrameworkVersion>.NET Framework 4.5.2</FrameworkVersion>");
 				else
 					throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
-				sw.WriteLine(string.Format("		<HelpTitle>{0}</HelpTitle>", Title));
+				sw.WriteLine(string.Format("		<HelpTitle>{0}</HelpTitle>", HelpTitle));
 				sw.WriteLine("		<HelpFileVersion>1.0.0.0</HelpFileVersion>");
-				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
+				if(Version == VisualStudioVersion.VS2010)
 					sw.WriteLine("		<PresentationStyle>VS2010</PresentationStyle>");
-				else if(Version == VisualStudioVersion.VS2015)
-					sw.WriteLine("		<PresentationStyle>VS2015</PresentationStyle>");
+				else if(Version == VisualStudioVersion.VS2013 || Version == VisualStudioVersion.VS2015)
+					sw.WriteLine("		<PresentationStyle>VS2013</PresentationStyle>");
 				else
 					throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
 				sw.WriteLine("		<ComponentConfigurations>");
@@ -167,8 +232,8 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("			</ComponentConfig>");
 				sw.WriteLine("		</ComponentConfigurations>");
 				sw.WriteLine("		<DocumentationSources>");
-				foreach(ProjectInfo proj in Projects)
-					sw.WriteLine(string.Format("			<DocumentationSource sourceFile=\"{0}\" />", proj.RelativePath));
+				foreach(string projPath in Projects)
+					sw.WriteLine(string.Format("			<DocumentationSource sourceFile=\"{0}\" />", projPath));
 				sw.WriteLine("		</DocumentationSources>");
 				sw.WriteLine("		<HelpAttributes>");
 				sw.WriteLine("			<HelpAttribute name=\"DocSet\" value=\"{@HtmlHelpName}\" />");
@@ -176,16 +241,18 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("			<HelpAttribute name=\"TargetOS\" value=\"Windows\" />");
 				sw.WriteLine("		</HelpAttributes>");
 				sw.WriteLine("		<NamespaceSummaries>");
-				foreach(ExternalAssembly summary in NamespaceSummaries)
+				foreach(NamespaceSummary summary in NamespaceSummaries)
 				{
 					if(summary.Description == null)
 						sw.WriteLine(string.Format("			<NamespaceSummaryItem name=\"{0}\" isDocumented=\"{1}\" />", summary.Name, summary.IsDocumented.ToString()));
 					else
-						sw.WriteLine(string.Format("			<NamespaceSummaryItem name=\"{0}\" isDocumented=\"{1}\">{2}</NamespaceSummaryItem>", summary.Name, summary.IsDocumented.ToString()));
+						sw.WriteLine(string.Format("			<NamespaceSummaryItem name=\"{0}\" isDocumented=\"{1}\">{2}</NamespaceSummaryItem>", summary.Name, summary.IsDocumented.ToString(), summary.Description));
 				}
 				sw.WriteLine("		</NamespaceSummaries>");
-				sw.WriteLine(string.Format("		<ProductTitle>{0}</ProductTitle>", ProductTitle));
-				sw.WriteLine(string.Format("		<VendorName>{1}</VendorName>", Vendor));
+				if(ProductTitle != null && ProductTitle.Length > 0)
+					sw.WriteLine(string.Format("		<ProductTitle>{0}</ProductTitle>", ProductTitle));
+				if (Vendor != null && Vendor.Length > 0)
+					sw.WriteLine(string.Format("		<VendorName>{0}</VendorName>", Vendor));
 				sw.WriteLine("		<ApiFilter />");
 				sw.WriteLine("		<PlugInConfigurations>");
 				sw.WriteLine("		</PlugInConfigurations>");
@@ -204,7 +271,7 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("		<CleanIntermediates>True</CleanIntermediates>");
 				sw.WriteLine("		<TransformComponentArguments>");
 				foreach(string key in TransformComponentArguments.Keys)
-					sw.WriteLine(string.Format("			<Argument Key=\"{0}\" Value=\"{1}\" />"));
+					sw.WriteLine(string.Format("			<Argument Key=\"{0}\" Value=\"{1}\" />", key, TransformComponentArguments[key]));
 
 				sw.WriteLine("		</TransformComponentArguments>");
 				sw.WriteLine("		<ComponentPath />");
@@ -245,7 +312,7 @@ namespace CSCodeGen.SHFB
 						sw.WriteLine("	<ItemGroup>");
 						foreach(Content item in content)
 						{
-							string typeName = Enum.GetName(typeof(Content), item.Type);
+							string typeName = Enum.GetName(typeof(Content.ContentType), item.Type);
 							if(item.ImageID == null && item.AlternateText == null && item.Link == null)
 							{
 								sw.WriteLine(string.Format("		<{0} Include=\"{1}\" />", typeName, item.Include));
@@ -261,8 +328,8 @@ namespace CSCodeGen.SHFB
 									sw.WriteLine(string.Format("			<Link>{0}</Link>", item.Link));
 								sw.WriteLine(string.Format("		</{0}>", typeName));
 							}
-							sw.WriteLine("	</ItemGroup>");
 						}
+						sw.WriteLine("	</ItemGroup>");
 					}
 				}
 				sw.WriteLine("	<ItemGroup>");
@@ -281,9 +348,45 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("	<Import Project=\"$(SHFBROOT)\\SandcastleHelpFileBuilder.targets\" />");
 				sw.WriteLine("</Project>");
 			}
+		}
+
+		/// <summary>
+		///   Writes all the project information, classes, etc. out to various files.
+		/// </summary>
+		/// <param name="rootFolder">Root location of the files. (The relative path will be added to this folder to generate the files.)</param>
+		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="InvalidOperationException">No C# projects have been added to <see cref="Projects"/>.</exception>
+		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
+		public override void WriteToFiles(string rootFolder)
+		{
+			if(rootFolder == null)
+				throw new ArgumentNullException("rootFolder");
+			if(rootFolder.Length == 0)
+				throw new ArgumentException("rootFolder is an empty string");
+			try
+			{
+				rootFolder = Path.GetFullPath(rootFolder);
+			}
+			catch(Exception e)
+			{
+				throw new ArgumentException("rootFolder is not a valid path (see inner exception).", e);
+			}
+
+			if(Projects.Count == 0)
+				throw new InvalidOperationException("An attempt was made to write the project information to a file, but no C# projects have been added to the Projects list. A documentation project must have at least one C# project.");
+
+			string fullFolderPath;
+			if(RelativePath.Length > 0)
+				fullFolderPath = Path.Combine(rootFolder, RelativePath);
+			else
+				fullFolderPath = rootFolder;
+
+			// Generate any needed directories.
+			DefaultValues.CreateFolderPath(fullFolderPath);
 
 			// Create the tokens file.
-			path = Path.Combine(fullFolderPath, "TokenFile.tokens");
+			string path = Path.Combine(fullFolderPath, "TokenFile.tokens");
 			using(StreamWriter sw = new StreamWriter(path))
 			{
 				sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -293,11 +396,9 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("	<item id=\"SolutionName\">{@SolutionName}</item>");
 				sw.WriteLine("</content>");
 			}
-		}
 
-		protected override string GetProjectFileExtension()
-		{
-			return "shfbproj";
+			// Write the project file.
+			WriteToFile(rootFolder);
 		}
 
 		#endregion Methods

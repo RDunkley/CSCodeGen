@@ -391,10 +391,8 @@ namespace CSCodeGen
 					template = template.Replace("<%copyright%>", string.Empty); // Avoid an infinite loop.
 				else
 				{
-					StringBuilder sb = new StringBuilder();
-					foreach (string line in DefaultValues.CopyrightTemplate)
-						sb.AppendLine(ConvertTemplateLineToActual(line, fileName, description, true, isLicense));
-					template = template.Replace("<%copyright%>", sb.ToString());
+					string copyRight = ConvertTemplateLineToActual(DefaultValues.CopyrightTemplate, fileName, description, true, isLicense);
+					template = template.Replace("<%copyright%>", copyRight);
 				}
 			}
 			if (template.Contains("<%license%>"))
@@ -448,10 +446,10 @@ namespace CSCodeGen
 			// Write the copyright statement section.
 			if (DefaultValues.CopyrightTemplate != null && DefaultValues.CopyrightTemplate.Length > 0)
 			{
-				foreach (string line in DefaultValues.CopyrightTemplate)
-					WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(line, fileName, description)), 0);
+				WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(DefaultValues.CopyrightTemplate, fileName, description, true)), 0);
 			}
 
+			// Write the license section.
 			if(DefaultValues.LicenseTemplate != null && DefaultValues.LicenseTemplate.Length > 0)
 			{
 				foreach (string line in DefaultValues.LicenseTemplate)

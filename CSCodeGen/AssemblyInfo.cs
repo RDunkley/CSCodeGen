@@ -115,10 +115,8 @@ namespace CSCodeGen
 				DocumentationHelper.WriteLine(wr, string.Format("[assembly: AssemblyInformationalVersion(\"{0}\")]", ProductVersion.ToString()), indentOffset);
 			if(DefaultValues.CopyrightTemplate != null && DefaultValues.CopyrightTemplate.Length > 0)
 			{
-				StringBuilder sb = new StringBuilder();
-				foreach(string line in DefaultValues.CopyrightTemplate)
-					sb.AppendLine(DocumentationHelper.ConvertTemplateLineToActual(line, null, null));
-				DocumentationHelper.WriteLine(wr, string.Format("[assembly: AssemblyCopyright(\"{0}\")]", sb.ToString()), indentOffset);
+				string copyright = DocumentationHelper.ConvertTemplateLineToActual(DefaultValues.CopyrightTemplate, null, null);
+				DocumentationHelper.WriteLine(wr, string.Format("[assembly: AssemblyCopyright(\"{0}\")]", copyright), indentOffset);
 			}
 			DocumentationHelper.WriteLine(wr);
 			DocumentationHelper.WriteLine(wr, "// Setting ComVisible to false makes the types in this assembly not visible", indentOffset);

@@ -106,7 +106,7 @@ namespace CSCodeGen
 		///   Template for the copyright statement.
 		/// </summary>
 		/// <remarks>This line is wrapped if needed.</remarks>
-		public static string[] CopyrightTemplate { get; set; }
+		public static string CopyrightTemplate { get; set; }
 
 		/// <summary>
 		///   Template for the auto-generated code license.
@@ -187,11 +187,9 @@ namespace CSCodeGen
 		///   Generates a default Copyright template.
 		/// </summary>
 		/// <returns>Array of the lines in the template.</returns>
-		private static string[] GenerateCopyrightTemplate()
+		private static string GenerateCopyrightTemplate()
 		{
-			List<string> template = new List<string>();
-			template.Add("Copyright © <%developer%> <%year%>");
-			return template.ToArray();
+			return "Copyright © <%developer%> <%year%>";
 		}
 
 		/// <summary>

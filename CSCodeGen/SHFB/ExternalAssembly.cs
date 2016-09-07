@@ -13,26 +13,50 @@
 // limitations under the License.
 //********************************************************************************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CSCodeGen.SHFB
 {
-	public class ExternalAssembly
+	/// <summary>
+	///   Provides summary information about a namespace.
+	/// </summary>
+	public class NamespaceSummary
 	{
 		#region Properties
 
-		public string Name { get; set; }
+		/// <summary>
+		///   Gets the name or identifier of the namespace summary.
+		/// </summary>
+		public string Name { get; private set; }
+
+		/// <summary>
+		///   Gets true if the namespace summary is documented, false otherwise.
+		/// </summary>
 		public bool IsDocumented { get; set; }
+
+		/// <summary>
+		///   Gets or sets a description of the namespace. Can be null or empty.
+		/// </summary>
 		public string Description { get; set; }
 
 		#endregion Properties
 
 		#region Methods
 
-		public ExternalAssembly(string name, bool isDocumented, string description)
+		/// <summary>
+		///   Instantiates a new <see cref="NamespaceSummary"/> object.
+		/// </summary>
+		/// <param name="name">Name of the namespace.</param>
+		/// <param name="isDocumented">True if the namespace is documented, false otherwise.</param>
+		/// <param name="description">Description of the namespace. Can be null or empty.</param>
+		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
+		public NamespaceSummary(string name, bool isDocumented, string description)
 		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if (name.Length == 0)
+				throw new ArgumentException("name is an empty string");
+
 			Name = name;
 			IsDocumented = isDocumented;
 			Description = description;

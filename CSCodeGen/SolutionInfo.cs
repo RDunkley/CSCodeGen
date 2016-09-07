@@ -32,12 +32,12 @@ namespace CSCodeGen
 		/// <summary>
 		///   Array of <see cref="ProjectInfo"/> objects representing the projects in the solution.
 		/// </summary>
-		public List<ProjectInfo> Projects { get; private set; }
+		public List<BaseProject> Projects { get; private set; }
 
 		/// <summary>
 		///   Lookup table of <see cref="ProjectInfo"/> objects and their associated dependencies. Only project information objects with dependencies are contained in the table.
 		/// </summary>
-		public Dictionary<ProjectInfo, List<ProjectInfo>> ProjectDependencies { get; private set; }
+		public Dictionary<BaseProject, List<BaseProject>> ProjectDependencies { get; private set; }
 
 		/// <summary>
 		///   Visual Studio Version to create the solution file as.
@@ -62,9 +62,9 @@ namespace CSCodeGen
 				throw new ArgumentException("name is an empty string");
 
 			Name = name;
-			ProjectDependencies = new Dictionary<ProjectInfo, List<ProjectInfo>>();
+			ProjectDependencies = new Dictionary<BaseProject, List<BaseProject>>();
 			Version = VisualStudioVersion.VS2015;
-			Projects = new List<ProjectInfo>();
+			Projects = new List<BaseProject>();
 		}
 
 		/// <summary>
@@ -118,9 +118,9 @@ namespace CSCodeGen
 						throw new NotImplementedException("The Visual Studio Version was not recognized as a supported version");
 				}
 
-				foreach (ProjectInfo proj in Projects)
+				foreach(BaseProject proj in Projects)
 				{
-					wr.WriteLine(string.Format("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"", ProjectInfo.GetProjectTypeGuid(proj.Type), proj.Name, Path.Combine(proj.RelativePath, proj.ProjectFileName), proj.Guid.ToString("B").ToUpper()));
+					wr.WriteLine(string.Format("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"", BaseProject.GetProjectTypeGuid(proj.Type), proj.Name, Path.Combine(proj.RelativePath, proj.ProjectFileName), proj.Guid.ToString("B").ToUpper()));
 					if (ProjectDependencies.ContainsKey(proj))
 					{
 						wr.WriteLine("	ProjectSection(ProjectDependencies) = postProject");
@@ -136,7 +136,7 @@ namespace CSCodeGen
 				wr.WriteLine("		Release|Any CPU = Release|Any CPU");
 				wr.WriteLine("	EndGlobalSection");
 				wr.WriteLine("	GlobalSection(ProjectConfigurationPlatforms) = postSolution");
-				foreach (ProjectInfo proj in Projects)
+				foreach (BaseProject proj in Projects)
 				{
 					wr.WriteLine(string.Format("		{0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU", proj.Guid.ToString("B").ToUpper()));
 					wr.WriteLine(string.Format("		{0}.Debug|Any CPU.Build.0 = Debug|Any CPU", proj.Guid.ToString("B").ToUpper()));
@@ -178,7 +178,7 @@ namespace CSCodeGen
 				throw new InvalidOperationException("An attempt was made to write the solution information to a file, but no projects were added to the Projects list. A solution must have at least one project file.");
 
 			// Generate the code files for all the projects.
-			foreach (ProjectInfo proj in Projects)
+			foreach(BaseProject proj in Projects)
 				proj.WriteToFiles(rootFolder);
 
 			// Write the solution file.

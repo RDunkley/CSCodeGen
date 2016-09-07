@@ -1,9 +1,19 @@
-﻿using System;
+﻿//********************************************************************************************************************************
+// Filename:    BaseProject.cs
+// Owner:       Richard Dunkley
+// Description: Base class for all Visual Studio projects.
+//********************************************************************************************************************************
+// Copyright © Richard Dunkley 2016
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+// License. You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable
+// law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+//********************************************************************************************************************************
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSCodeGen
 {
@@ -30,14 +40,14 @@ namespace CSCodeGen
 		public string ProjectFileName { get; private set; }
 
 		/// <summary>
-		///   Type of project that this object represents.
-		/// </summary>
-		public ProjectType Type { get; private set; }
-
-		/// <summary>
 		///   Assemblies that are referenced by the project.
 		/// </summary>
 		public List<ProjectReferenceAssembly> References { get; set; }
+
+		/// <summary>
+		///   RelativePath where the project is represented.
+		/// </summary>
+		public string RelativePath { get; private set; }
 
 		/// <summary>
 		///   Root namespace of the project.
@@ -45,9 +55,9 @@ namespace CSCodeGen
 		public string RootNamespace { get; set; }
 
 		/// <summary>
-		///   RelativePath where the project is represented.
+		///   Type of project that this object represents.
 		/// </summary>
-		public string RelativePath { get; private set; }
+		public ProjectType Type { get; private set; }
 
 		/// <summary>
 		///   Visual Studio Version to create the project file as.
@@ -91,6 +101,10 @@ namespace CSCodeGen
 			Version = VisualStudioVersion.VS2015;
 		}
 
+		/// <summary>
+		///   Gets the file extension for this project.
+		/// </summary>
+		/// <returns>File extension associated with this project.</returns>
 		protected abstract string GetProjectFileExtension();
 
 		/// <summary>
@@ -113,6 +127,24 @@ namespace CSCodeGen
 					throw new NotImplementedException("The specified ProjectType is not supported.");
 			}
 		}
+
+		/// <summary>
+		///   Write the project information out to a file.
+		/// </summary>
+		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
+		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
+		public abstract void WriteToFile(string rootFolder);
+
+		/// <summary>
+		///   Writes all the project information, classes, etc. out to various files.
+		/// </summary>
+		/// <param name="rootFolder">Root location of the files. (The relative path will be added to this folder to generate the files.)</param>
+		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
+		public abstract void WriteToFiles(string rootFolder);
 
 		#endregion Methods
 	}

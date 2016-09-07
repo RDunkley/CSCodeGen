@@ -12,9 +12,6 @@
 // limitations under the License.
 //********************************************************************************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CSCodeGen.SHFB
 {
@@ -25,30 +22,86 @@ namespace CSCodeGen.SHFB
 	{
 		#region Enumerations
 
+		/// <summary>
+		///   Represents different types of content that can be added to a SHFB project.
+		/// </summary>
 		public enum ContentType
 		{
-			None,
-			Folder,
-			Image,
+			#region Names
+
+			/// <summary>
+			///   General content included in the project.
+			/// </summary>
 			Content,
+
+			/// <summary>
+			///   A folder designated within the project structure.
+			/// </summary>
+			Folder,
+
+			/// <summary>
+			///   Image file included in the project.
+			/// </summary>
+			Image,
+
+			/// <summary>
+			///   
+			/// </summary>
+			None,
+
+			#endregion Names
 		}
 
 		#endregion Enumerations
 
 		#region Properties
 
+		/// <summary>
+		///   Gets the content's location.
+		/// </summary>
 		public string Include { get; private set; }
+
+		/// <summary>
+		///   Gets the type of content.
+		/// </summary>
 		public ContentType Type { get; private set; }
+
+		/// <summary>
+		///   Gets or sets the image ID of the content. Can be null or empty.
+		/// </summary>
 		public string ImageID { get; set; }
+
+		/// <summary>
+		///   Gets or sets the alternate text associated with the content. Can be null or empty.
+		/// </summary>
 		public string AlternateText { get; set; }
+
+		/// <summary>
+		///   Gets or sets a link associated with the content. Can be null or empty.
+		/// </summary>
 		public string Link { get; set; }
 
 		#endregion Properties
 
 		#region Methods
 
+		/// <summary>
+		///   Instantiates a new <see cref="Content"/> object.
+		/// </summary>
+		/// <param name="include">Content's location.</param>
+		/// <param name="type">Type of content.</param>
+		/// <param name="imageID">Image ID of the content.</param>
+		/// <param name="alternateText">Alternate text associated with the content.</param>
+		/// <param name="link">Link associated with the content.</param>
+		/// <exception cref="ArgumentException"><i>include</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><i>include</i> is a null reference.</exception>
 		public Content(string include, ContentType type, string imageID = null, string alternateText = null, string link = null)
 		{
+			if (include == null)
+				throw new ArgumentNullException("include");
+			if (include.Length == 0)
+				throw new ArgumentException("include is an empty string");
+
 			Include = include;
 			Type = type;
 			ImageID = imageID;

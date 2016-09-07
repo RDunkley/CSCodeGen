@@ -45,6 +45,16 @@ namespace CSCodeGen
 		/// </summary>
 		public AssemblyInfo AssemblyInformation { get; set; }
 
+		/// <summary>
+		/// True if the debug documentation file (associated .xml) should be created, false if not.
+		/// </summary>
+		public bool IncludeDebugDocumentationFile { get; set; }
+
+		/// <summary>
+		/// True if the release documentation file (associated .xml) should be created, false if not.
+		/// </summary>
+		public bool IncludeReleaseDocumentationFile { get; set; }
+
 		#endregion Properties
 
 		#region Methods
@@ -212,7 +222,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
-		public void WriteToFile(string rootFolder)
+		public override void WriteToFile(string rootFolder)
 		{
 			if (rootFolder == null)
 				throw new ArgumentNullException("rootFolder");
@@ -278,6 +288,8 @@ namespace CSCodeGen
 				sw.WriteLine("		<DefineConstants>DEBUG;TRACE</DefineConstants>");
 				sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
 				sw.WriteLine("		<WarningLevel>4</WarningLevel>");
+				if(IncludeDebugDocumentationFile)
+					sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", debugPath, Name));
 				sw.WriteLine("	</PropertyGroup>");
 				sw.WriteLine("	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' \">");
 				sw.WriteLine("		<DebugType>pdbonly</DebugType>");
@@ -285,6 +297,8 @@ namespace CSCodeGen
 				sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", releasePath));
 				sw.WriteLine("		<DefineConstants>TRACE</DefineConstants>");
 				sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
+				if(IncludeReleaseDocumentationFile)
+					sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", releasePath, Name));
 				sw.WriteLine("		<WarningLevel>4</WarningLevel>");
 				sw.WriteLine("	</PropertyGroup>");
 				sw.WriteLine("	<ItemGroup>");
@@ -341,7 +355,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
-		public void WriteToFiles(string rootFolder)
+		public override void WriteToFiles(string rootFolder)
 		{
 			if (rootFolder == null)
 				throw new ArgumentNullException("rootFolder");
@@ -365,11 +379,14 @@ namespace CSCodeGen
 			else
 				fullFolderPath = rootFolder;
 
+			// Generate any needed directories.
+			DefaultValues.CreateFolderPath(fullFolderPath);
+
 			// Generate the code files.
 			foreach (ProjectFile file in Files)
 				file.Source.WriteToFile(fullFolderPath);
 
-			// Generate the assemby info file if it exists.
+			// Generate the assembly info file if it exists.
 			if (AssemblyInformation != null)
 				AssemblyInformation.WriteToFile(Path.Combine(fullFolderPath, "Properties"));
 
