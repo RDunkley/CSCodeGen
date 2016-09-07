@@ -24,9 +24,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Specifies the documentation summary that will be generated with the type.
+		///   Determines whether the component can be suspended and resumed. True if it can, false otherwise.
 		/// </summary>
-		public string Summary { get; private set; }
+		public bool CanSuspendResume { get; set; }
+
+		/// <summary>
+		///   Code to initialize the component.
+		/// </summary>
+		public List<string> InitializationCode { get; private set; }
 
 		/// <summary>
 		///   Name of the type.
@@ -34,14 +39,9 @@ namespace CSCodeGen
 		public string Name { get; private set; }
 
 		/// <summary>
-		///   Type of the component (Ex: TableLayoutPanel, Label, etc.).
+		///   Specifies the documentation summary that will be generated with the type.
 		/// </summary>
-		public string Type { get; private set; }
-
-		/// <summary>
-		///   Determines whether the component can be suspended and resumed. True if it can, false otherwise.
-		/// </summary>
-		public bool CanSuspendResume { get; set; }
+		public string Summary { get; private set; }
 
 		/// <summary>
 		///   If <see cref="CanSuspendResume"/> is true, then this property determines it's suspend/resume order. Does nothing if <see cref="CanSuspendResume"/> is false.
@@ -49,9 +49,9 @@ namespace CSCodeGen
 		public int SuspendResumeOrder { get; set; }
 
 		/// <summary>
-		///   Code to initialize the component.
+		///   Type of the component (Ex: TableLayoutPanel, Label, etc.).
 		/// </summary>
-		public List<string> InitializationCode { get; private set; }
+		public string Type { get; private set; }
 
 		#endregion Properties
 

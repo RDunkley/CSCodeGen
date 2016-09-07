@@ -23,14 +23,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Reference name of the assembly.
-		/// </summary>
-		public string Reference { get; set; }
-
-		/// <summary>
 		///   Hint path of where the assembly is located.
 		/// </summary>
 		public string HintPath { get; set; }
+
+		/// <summary>
+		///   Reference name of the assembly.
+		/// </summary>
+		public string Reference { get; set; }
 
 		#endregion Properties
 

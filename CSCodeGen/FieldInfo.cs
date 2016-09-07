@@ -25,14 +25,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Type of the field (Ex: int, string, etc.).
-		/// </summary>
-		public string Type { get; protected set; }
-
-		/// <summary>
 		///   Default value of the field (Ex: 0).
 		/// </summary>
 		public string DefaultValue { get; set; }
+
+		/// <summary>
+		///   Type of the field (Ex: int, string, etc.).
+		/// </summary>
+		public string Type { get; protected set; }
 
 		#endregion Properties
 

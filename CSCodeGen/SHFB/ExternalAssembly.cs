@@ -24,9 +24,9 @@ namespace CSCodeGen.SHFB
 		#region Properties
 
 		/// <summary>
-		///   Gets the name or identifier of the namespace summary.
+		///   Gets or sets a description of the namespace. Can be null or empty.
 		/// </summary>
-		public string Name { get; private set; }
+		public string Description { get; set; }
 
 		/// <summary>
 		///   Gets true if the namespace summary is documented, false otherwise.
@@ -34,9 +34,9 @@ namespace CSCodeGen.SHFB
 		public bool IsDocumented { get; set; }
 
 		/// <summary>
-		///   Gets or sets a description of the namespace. Can be null or empty.
+		///   Gets the name or identifier of the namespace summary.
 		/// </summary>
-		public string Description { get; set; }
+		public string Name { get; private set; }
 
 		#endregion Properties
 

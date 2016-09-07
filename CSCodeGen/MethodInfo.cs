@@ -25,6 +25,21 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   Code lines of the method.
+		/// </summary>
+		public List<string> CodeLines { get; private set; }
+
+		/// <summary>
+		///   List of <see cref="ExceptionInfo"/> objects representing the exceptions that can be thrown from the method.
+		/// </summary>
+		public List<ExceptionInfo> Exceptions { get; private set; }
+
+		/// <summary>
+		///   List of <see cref="ParameterInfo"/> objects representing the parameters of the method or null if no parameters are specified.
+		/// </summary>
+		public List<ParameterInfo> Parameters { get; private set; }
+
+		/// <summary>
 		///   Return type of the method. Can be null if a constructor.
 		/// </summary>
 		public string ReturnType { get; protected set; }
@@ -33,21 +48,6 @@ namespace CSCodeGen
 		///   Description of the return type of the method. Unused if <see cref="ReturnType"/> is 'void'. Can not be null if <see cref="ReturnType"/> is not.
 		/// </summary>
 		public string ReturnTypeDescription { get; set; }
-
-		/// <summary>
-		///   List of <see cref="ParameterInfo"/> objects representing the parameters of the method or null if no parameters are specified.
-		/// </summary>
-		public List<ParameterInfo> Parameters { get; private set; }
-
-		/// <summary>
-		///   List of <see cref="ExceptionInfo"/> objects representing the exceptions that can be thrown from the method.
-		/// </summary>
-		public List<ExceptionInfo> Exceptions { get; private set; }
-
-		/// <summary>
-		///   Code lines of the method.
-		/// </summary>
-		public List<string> CodeLines { get; private set; }
 
 		#endregion Properties
 
@@ -76,6 +76,47 @@ namespace CSCodeGen
 			Parameters = new List<ParameterInfo>();
 			Exceptions = new List<ExceptionInfo>();
 			CodeLines = new List<string>();
+		}
+
+		/// <summary>
+		///   Compares a <see cref="MethodInfo"/> object with this object and returns an integer that indicates their relative position in the sort order.
+		/// </summary>
+		/// <param name="other">Other <see cref="MethodInfo"/> object to compare this object to.</param>
+		/// <returns>
+		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object proceeds 
+		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
+		/// </returns>
+		public int CompareTo(MethodInfo other)
+		{
+			int compare = string.Compare(this.Name, other.Name);
+
+			if (compare != 0)
+				return compare;
+
+			int compareLength = this.Parameters.Count;
+			if (other.Parameters.Count < compareLength)
+				compareLength = other.Parameters.Count;
+
+			// Compare the parameters.
+			for (int i = 0; i < compareLength; i++)
+			{
+				// Compare the type first.
+				compare = string.Compare(this.Parameters[i].Type, other.Parameters[i].Type);
+				if (compare != 0)
+					return compare;
+
+				// Compare the parameter name next.
+				compare = string.Compare(this.Parameters[i].Name, other.Parameters[i].Name);
+				if (compare != 0)
+					return compare;
+			}
+
+			// Check if any have more parameters than the other.
+			if (this.Parameters.Count > compareLength)
+				return 1;
+			if (other.Parameters.Count > compareLength)
+				return -1;
+			return 0;
 		}
 
 		/// <summary>
@@ -128,47 +169,6 @@ namespace CSCodeGen
 
 			indentOffset--;
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
-		}
-
-		/// <summary>
-		///   Compares a <see cref="MethodInfo"/> object with this object and returns an integer that indicates their relative position in the sort order.
-		/// </summary>
-		/// <param name="other">Other <see cref="MethodInfo"/> object to compare this object to.</param>
-		/// <returns>
-		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object proceeds 
-		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
-		/// </returns>
-		public int CompareTo(MethodInfo other)
-		{
-			int compare = string.Compare(this.Name, other.Name);
-
-			if (compare != 0)
-				return compare;
-
-			int compareLength = this.Parameters.Count;
-			if (other.Parameters.Count < compareLength)
-				compareLength = other.Parameters.Count;
-
-			// Compare the parameters.
-			for(int i = 0; i < compareLength; i++)
-			{
-				// Compare the type first.
-				compare = string.Compare(this.Parameters[i].Type, other.Parameters[i].Type);
-				if(compare != 0)
-					return compare;
-
-				// Compare the parameter name next.
-				compare = string.Compare(this.Parameters[i].Name, other.Parameters[i].Name);
-				if (compare != 0)
-					return compare;
-			}
-
-			// Check if any have more parameters than the other.
-			if (this.Parameters.Count > compareLength)
-				return 1;
-			if (other.Parameters.Count > compareLength)
-				return -1;
-			return 0;
 		}
 
 		#endregion Methods

@@ -26,24 +26,19 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   Information about the assembly.
+		/// </summary>
+		public AssemblyInfo AssemblyInformation { get; set; }
+
+		/// <summary>
 		///   Debug path.
 		/// </summary>
 		public string DebugPath { get; set; }
 
 		/// <summary>
-		///   Release path.
-		/// </summary>
-		public string ReleasePath { get; set; }
-
-		/// <summary>
 		///   Files contained in the project.
 		/// </summary>
 		public List<ProjectFile> Files { get; private set; }
-
-		/// <summary>
-		///   Information about the assembly.
-		/// </summary>
-		public AssemblyInfo AssemblyInformation { get; set; }
 
 		/// <summary>
 		/// True if the debug documentation file (associated .xml) should be created, false if not.
@@ -54,6 +49,11 @@ namespace CSCodeGen
 		/// True if the release documentation file (associated .xml) should be created, false if not.
 		/// </summary>
 		public bool IncludeReleaseDocumentationFile { get; set; }
+
+		/// <summary>
+		///   Release path.
+		/// </summary>
+		public string ReleasePath { get; set; }
 
 		#endregion Properties
 
@@ -96,23 +96,6 @@ namespace CSCodeGen
 			if (file == null)
 				throw new ArgumentNullException("file");
 
-			Files.Add(new ProjectFile(file));
-		}
-
-		/// <summary>
-		///   Adds a file to the project.
-		/// </summary>
-		/// <param name="nameSpace">Namespace of the file.</param>
-		/// <param name="typeObject"><see cref="NamespaceTypeInfo"/> object containing the type to be represented in the file.</param>
-		/// <param name="relativePath">Relative path where the file is represented.</param>
-		/// <param name="description">Description of the file.</param>
-		/// <param name="fileNameExtension">Extension to add to the filename. (Ex: 'designer' would be for filename.designer.cs). Can be null or empty.</param>
-		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, or <i>info</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameSpace</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
-		public void AddFile(string nameSpace, NamespaceTypeInfo typeObject, string relativePath = null, string description = null, string fileNameExtension = null)
-		{
-			FileInfo file = new FileInfo(nameSpace, typeObject, relativePath, description, fileNameExtension);
 			Files.Add(new ProjectFile(file));
 		}
 
@@ -213,6 +196,51 @@ namespace CSCodeGen
 			// Add the files with the designer dependency.
 			Files.Add(new ProjectFile(userFile, "UserControl", null));
 			Files.Add(new ProjectFile(designerFile, null, userFile.FileName));
+		}
+
+		/// <summary>
+		///   Adds a file to the project.
+		/// </summary>
+		/// <param name="nameSpace">Namespace of the file.</param>
+		/// <param name="typeObject"><see cref="NamespaceTypeInfo"/> object containing the type to be represented in the file.</param>
+		/// <param name="relativePath">Relative path where the file is represented.</param>
+		/// <param name="description">Description of the file.</param>
+		/// <param name="fileNameExtension">Extension to add to the filename. (Ex: 'designer' would be for filename.designer.cs). Can be null or empty.</param>
+		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, or <i>info</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>nameSpace</i> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
+		public void AddFile(string nameSpace, NamespaceTypeInfo typeObject, string relativePath = null, string description = null, string fileNameExtension = null)
+		{
+			FileInfo file = new FileInfo(nameSpace, typeObject, relativePath, description, fileNameExtension);
+			Files.Add(new ProjectFile(file));
+		}
+
+		/// <summary>
+		///   Gets the file extension for this project.
+		/// </summary>
+		/// <returns>'csproj'</returns>
+		protected override string GetProjectFileExtension()
+		{
+			return "csproj";
+		}
+
+		/// <summary>
+		///   Gets a string of the project type.
+		/// </summary>
+		/// <param name="type"><see cref="ProjectType"/> of the project.</param>
+		/// <returns>String which indicates in the project file what project type it is.</returns>
+		/// <exception cref="NotImplementedException">The specified project type is not supported.</exception>
+		private string GetProjectType(ProjectType type)
+		{
+			switch (type)
+			{
+				case ProjectType.Library:
+					return "Library";
+				case ProjectType.Exe:
+					return "WinExe";
+				default:
+					throw new NotImplementedException("The specified ProjectType is not supported.");
+			}
 		}
 
 		/// <summary>
@@ -392,30 +420,6 @@ namespace CSCodeGen
 
 			// Write the project file.
 			WriteToFile(rootFolder);
-		}
-
-		/// <summary>
-		///   Gets a string of the project type.
-		/// </summary>
-		/// <param name="type"><see cref="ProjectType"/> of the project.</param>
-		/// <returns>String which indicates in the project file what project type it is.</returns>
-		/// <exception cref="NotImplementedException">The specified project type is not supported.</exception>
-		private string GetProjectType(ProjectType type)
-		{
-			switch (type)
-			{
-				case ProjectType.Library:
-					return "Library";
-				case ProjectType.Exe:
-					return "WinExe";
-				default:
-					throw new NotImplementedException("The specified ProjectType is not supported.");
-			}
-		}
-
-		protected override string GetProjectFileExtension()
-		{
-			return "csproj";
 		}
 
 		#endregion Methods

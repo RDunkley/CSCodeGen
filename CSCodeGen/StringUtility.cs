@@ -25,80 +25,6 @@ namespace CSCodeGen
 	public static class StringUtility
 	{
 		/// <summary>
-		///   Gets the lower camel case of the provided name.
-		/// </summary>
-		/// <param name="name">Name to convert to lower camel case.</param>
-		/// <param name="renameKeyWords">True if the method should rename C# keywords, false to allow them to be returned.</param>
-		/// <returns>Name in upper camel case.</returns>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
-		/// <remarks>
-		///   This method will also remove '_' characters and treat them as word breaks. For example, this_word would go to 
-		///   thisWord. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
-		///   'some word' would end up as 'someWord' or 'test@mail.com' would be 'testMailCom'.
-		/// </remarks>
-		public static string GetLowerCamelCase(string name, bool renameKeyWords)
-		{
-			if (name == null)
-				throw new ArgumentNullException("name");
-			if (name.Length == 0)
-				throw new ArgumentException("name is an empty string.");
-
-			StringBuilder builder = new StringBuilder();
-			bool capNext = false;
-			bool firstLetter = true;
-			for (int i = 0; i < name.Length; i++)
-			{
-				if (firstLetter)
-				{
-					if (IsValidCSharpIdentifierFirstLetter(name[i]))
-					{
-						builder.Append(char.ToLower(name[i]));
-						firstLetter = false; // No longer the first character.
-					}
-					// Skip if not a valid character
-				}
-				else
-				{
-					if (IsValidCSharpIdentifierNonFirstLetter(name[i]))
-					{
-						if (name[i] == '_')
-						{
-							// Skip if underscore and capitalize the next character.
-							capNext = true;
-						}
-						else
-						{
-							if (capNext)
-							{
-								builder.Append(char.ToUpper(name[i]));
-								capNext = false;
-							}
-							else
-							{
-								builder.Append(name[i]);
-							}
-						}
-					}
-					else
-					{
-						// Skip if not a valid character and capitalize next character.
-						capNext = true;
-					}
-				}
-			}
-			
-			string value = builder.ToString();
-			if(renameKeyWords)
-			{
-				if (GetKeywordList().Contains(value))
-					value = string.Format("{0}Value", value);
-			}
-
-			return value;
-		}
-
-		/// <summary>
 		///   Converts an absolute path to a relative one.
 		/// </summary>
 		/// <param name="absolutePath">Absolute path to be converted.</param>
@@ -114,69 +40,63 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
-		///   Gets the upper camel case of the provided name.
+		///   Determines if the name is a valid C# identifier.
 		/// </summary>
-		/// <param name="name">Name to convert to upper camel case.</param>
-		/// <returns>Name in upper camel case.</returns>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
-		/// <remarks>
-		///   This method will also remove '_' characters and treat them as word breaks. For example, 'this_word' would go to 
-		///   'ThisWord'. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
-		///   'some word' would end up as 'SomeWord' or 'test@mail.com' would be 'TestMailCom'.
-		/// </remarks>
-		public static string GetUpperCamelCase(string name)
+		/// <param name="name">Name to be checked.</param>
+		/// <returns>True if it is valid, false otherwise.</returns>
+		public static bool IsValidCSharpIdentifier(string name)
 		{
 			if (name == null)
-				throw new ArgumentNullException("name");
+				return false;
 			if (name.Length == 0)
-				throw new ArgumentException("name is an empty string.");
+				return false;
 
-			StringBuilder builder = new StringBuilder();
-			bool capNext = false;
-			bool firstLetter = true;
-			for (int i = 0; i < name.Length; i++)
+			// Check the first letter.
+			if (!IsValidCSharpIdentifierFirstLetter(name[0]))
+				return false;
+
+			// Check the remaining letters.
+			for (int i = 1; i < name.Length; i++)
 			{
-				if (firstLetter)
-				{
-					if (IsValidCSharpIdentifierFirstLetter(name[i]))
-					{
-						builder.Append(char.ToUpper(name[i]));
-						firstLetter = false; // No longer the first character.
-					}
-					// Skip if not a valid character
-				}
-				else
-				{
-					if (IsValidCSharpIdentifierNonFirstLetter(name[i]))
-					{
-						if (name[i] == '_')
-						{
-							// Skip if underscore and capitalize the next character.
-							capNext = true;
-						}
-						else
-						{
-							if (capNext)
-							{
-								builder.Append(char.ToUpper(name[i]));
-								capNext = false;
-							}
-							else
-							{
-								builder.Append(name[i]);
-							}
-						}
-					}
-					else
-					{
-						// Skip if not a valid character and capitalize next character.
-						capNext = true;
-					}
-				}
+				if (!IsValidCSharpIdentifierNonFirstLetter(name[i]))
+					return false;
 			}
 
-			return builder.ToString();
+			// Validate that it isn't a keyword.
+			List<string> list = GetKeywordList();
+			if (list.Contains(name))
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		///   Determines if the letter is a valid C# identifier first letter.
+		/// </summary>
+		/// <param name="letter">Letter to be checked.</param>
+		/// <returns>True if the letter is valid, false otherwise.</returns>
+		public static bool IsValidCSharpIdentifierFirstLetter(char letter)
+		{
+			UnicodeCategory cat = char.GetUnicodeCategory(letter);
+			if (cat != UnicodeCategory.UppercaseLetter && cat != UnicodeCategory.LowercaseLetter && cat != UnicodeCategory.TitlecaseLetter
+				&& cat != UnicodeCategory.ModifierLetter && cat != UnicodeCategory.OtherLetter)
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		///   Determines if the letter is a valid C# identifier non-first letter.
+		/// </summary>
+		/// <param name="letter">Letter to be checked.</param>
+		/// <returns>True if the letter is valid, false otherwise.</returns>
+		public static bool IsValidCSharpIdentifierNonFirstLetter(char letter)
+		{
+			UnicodeCategory cat = char.GetUnicodeCategory(letter);
+			if (cat != UnicodeCategory.UppercaseLetter && cat != UnicodeCategory.LowercaseLetter && cat != UnicodeCategory.TitlecaseLetter
+				&& cat != UnicodeCategory.ModifierLetter && cat != UnicodeCategory.OtherLetter && cat != UnicodeCategory.LetterNumber
+				&& cat != UnicodeCategory.NonSpacingMark && cat != UnicodeCategory.DecimalDigitNumber && cat != UnicodeCategory.SpacingCombiningMark
+				&& cat != UnicodeCategory.ConnectorPunctuation && cat != UnicodeCategory.Format)
+				return false;
+			return true;
 		}
 
 		/// <summary>
@@ -292,63 +212,143 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
-		///   Determines if the name is a valid C# identifier.
+		///   Gets the lower camel case of the provided name.
 		/// </summary>
-		/// <param name="name">Name to be checked.</param>
-		/// <returns>True if it is valid, false otherwise.</returns>
-		public static bool IsValidCSharpIdentifier(string name)
+		/// <param name="name">Name to convert to lower camel case.</param>
+		/// <param name="renameKeyWords">True if the method should rename C# keywords, false to allow them to be returned.</param>
+		/// <returns>Name in upper camel case.</returns>
+		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
+		/// <remarks>
+		///   This method will also remove '_' characters and treat them as word breaks. For example, this_word would go to 
+		///   thisWord. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
+		///   'some word' would end up as 'someWord' or 'test@mail.com' would be 'testMailCom'.
+		/// </remarks>
+		public static string GetLowerCamelCase(string name, bool renameKeyWords)
 		{
 			if (name == null)
-				return false;
+				throw new ArgumentNullException("name");
 			if (name.Length == 0)
-				return false;
+				throw new ArgumentException("name is an empty string.");
 
-			// Check the first letter.
-			if (!IsValidCSharpIdentifierFirstLetter(name[0]))
-				return false;
-
-			// Check the remaining letters.
-			for (int i = 1; i < name.Length; i++)
+			StringBuilder builder = new StringBuilder();
+			bool capNext = false;
+			bool firstLetter = true;
+			for (int i = 0; i < name.Length; i++)
 			{
-				if (!IsValidCSharpIdentifierNonFirstLetter(name[i]))
-					return false;
+				if (firstLetter)
+				{
+					if (IsValidCSharpIdentifierFirstLetter(name[i]))
+					{
+						builder.Append(char.ToLower(name[i]));
+						firstLetter = false; // No longer the first character.
+					}
+					// Skip if not a valid character
+				}
+				else
+				{
+					if (IsValidCSharpIdentifierNonFirstLetter(name[i]))
+					{
+						if (name[i] == '_')
+						{
+							// Skip if underscore and capitalize the next character.
+							capNext = true;
+						}
+						else
+						{
+							if (capNext)
+							{
+								builder.Append(char.ToUpper(name[i]));
+								capNext = false;
+							}
+							else
+							{
+								builder.Append(name[i]);
+							}
+						}
+					}
+					else
+					{
+						// Skip if not a valid character and capitalize next character.
+						capNext = true;
+					}
+				}
 			}
 
-			// Validate that it isn't a keyword.
-			List<string> list = GetKeywordList();
-			if (list.Contains(name))
-				return false;
-			return true;
+			string value = builder.ToString();
+			if (renameKeyWords)
+			{
+				if (GetKeywordList().Contains(value))
+					value = string.Format("{0}Value", value);
+			}
+
+			return value;
 		}
 
 		/// <summary>
-		///   Determines if the letter is a valid C# identifier first letter.
+		///   Gets the upper camel case of the provided name.
 		/// </summary>
-		/// <param name="letter">Letter to be checked.</param>
-		/// <returns>True if the letter is valid, false otherwise.</returns>
-		public static bool IsValidCSharpIdentifierFirstLetter(char letter)
+		/// <param name="name">Name to convert to upper camel case.</param>
+		/// <returns>Name in upper camel case.</returns>
+		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
+		/// <remarks>
+		///   This method will also remove '_' characters and treat them as word breaks. For example, 'this_word' would go to 
+		///   'ThisWord'. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
+		///   'some word' would end up as 'SomeWord' or 'test@mail.com' would be 'TestMailCom'.
+		/// </remarks>
+		public static string GetUpperCamelCase(string name)
 		{
-			UnicodeCategory cat = char.GetUnicodeCategory(letter);
-			if (cat != UnicodeCategory.UppercaseLetter && cat != UnicodeCategory.LowercaseLetter && cat != UnicodeCategory.TitlecaseLetter
-				&& cat != UnicodeCategory.ModifierLetter && cat != UnicodeCategory.OtherLetter)
-				return false;
-			return true;
-		}
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if (name.Length == 0)
+				throw new ArgumentException("name is an empty string.");
 
-		/// <summary>
-		///   Determines if the letter is a valid C# identifier non-first letter.
-		/// </summary>
-		/// <param name="letter">Letter to be checked.</param>
-		/// <returns>True if the letter is valid, false otherwise.</returns>
-		public static bool IsValidCSharpIdentifierNonFirstLetter(char letter)
-		{
-			UnicodeCategory cat = char.GetUnicodeCategory(letter);
-			if (cat != UnicodeCategory.UppercaseLetter && cat != UnicodeCategory.LowercaseLetter && cat != UnicodeCategory.TitlecaseLetter
-				&& cat != UnicodeCategory.ModifierLetter && cat != UnicodeCategory.OtherLetter && cat != UnicodeCategory.LetterNumber
-				&& cat != UnicodeCategory.NonSpacingMark && cat != UnicodeCategory.DecimalDigitNumber && cat != UnicodeCategory.SpacingCombiningMark
-				&& cat != UnicodeCategory.ConnectorPunctuation && cat != UnicodeCategory.Format)
-				return false;
-			return true;
+			StringBuilder builder = new StringBuilder();
+			bool capNext = false;
+			bool firstLetter = true;
+			for (int i = 0; i < name.Length; i++)
+			{
+				if (firstLetter)
+				{
+					if (IsValidCSharpIdentifierFirstLetter(name[i]))
+					{
+						builder.Append(char.ToUpper(name[i]));
+						firstLetter = false; // No longer the first character.
+					}
+					// Skip if not a valid character
+				}
+				else
+				{
+					if (IsValidCSharpIdentifierNonFirstLetter(name[i]))
+					{
+						if (name[i] == '_')
+						{
+							// Skip if underscore and capitalize the next character.
+							capNext = true;
+						}
+						else
+						{
+							if (capNext)
+							{
+								builder.Append(char.ToUpper(name[i]));
+								capNext = false;
+							}
+							else
+							{
+								builder.Append(name[i]);
+							}
+						}
+					}
+					else
+					{
+						// Skip if not a valid character and capitalize next character.
+						capNext = true;
+					}
+				}
+			}
+
+			return builder.ToString();
 		}
 	}
 }

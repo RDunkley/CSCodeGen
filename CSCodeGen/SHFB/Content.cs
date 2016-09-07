@@ -57,14 +57,9 @@ namespace CSCodeGen.SHFB
 		#region Properties
 
 		/// <summary>
-		///   Gets the content's location.
+		///   Gets or sets the alternate text associated with the content. Can be null or empty.
 		/// </summary>
-		public string Include { get; private set; }
-
-		/// <summary>
-		///   Gets the type of content.
-		/// </summary>
-		public ContentType Type { get; private set; }
+		public string AlternateText { get; set; }
 
 		/// <summary>
 		///   Gets or sets the image ID of the content. Can be null or empty.
@@ -72,14 +67,19 @@ namespace CSCodeGen.SHFB
 		public string ImageID { get; set; }
 
 		/// <summary>
-		///   Gets or sets the alternate text associated with the content. Can be null or empty.
+		///   Gets the content's location.
 		/// </summary>
-		public string AlternateText { get; set; }
+		public string Include { get; private set; }
 
 		/// <summary>
 		///   Gets or sets a link associated with the content. Can be null or empty.
 		/// </summary>
 		public string Link { get; set; }
+
+		/// <summary>
+		///   Gets the type of content.
+		/// </summary>
+		public ContentType Type { get; private set; }
 
 		#endregion Properties
 

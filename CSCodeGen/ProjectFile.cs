@@ -23,6 +23,11 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   Specifies the classes that the file may be dependent upon.
+		/// </summary>
+		public string DependentUpon { get; set; }
+
+		/// <summary>
 		///   Reference to the <see cref="FileInfo"/> object containing information of the contents of the file.
 		/// </summary>
 		public FileInfo Source { get; private set; }
@@ -31,11 +36,6 @@ namespace CSCodeGen
 		///   Sub-type of the file. Matches the sub-type specified in the visual studio project files.
 		/// </summary>
 		public string SubType { get; set; }
-
-		/// <summary>
-		///   Specifies the classes that the file may be dependent upon.
-		/// </summary>
-		public string DependentUpon { get; set; }
 
 		#endregion Properties
 

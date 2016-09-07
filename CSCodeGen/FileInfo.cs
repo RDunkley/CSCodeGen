@@ -31,11 +31,6 @@ namespace CSCodeGen
 		public string Description { get; private set; }
 
 		/// <summary>
-		///   RelativePath of the folder where the C# file represented.
-		/// </summary>
-		public string RelativePath { get; private set; }
-
-		/// <summary>
 		///   Name of the file.
 		/// </summary>
 		public string FileName { get; private set; }
@@ -49,6 +44,11 @@ namespace CSCodeGen
 		///   Namespace of the file.
 		/// </summary>
 		public string NameSpace { get; private set; }
+
+		/// <summary>
+		///   RelativePath of the folder where the C# file represented.
+		/// </summary>
+		public string RelativePath { get; private set; }
 
 		/// <summary>
 		///   Type contained in the namespace.
@@ -99,74 +99,6 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
-		///   Writes the source code information in this object out to a file in the form of source code.
-		/// </summary>
-		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
-		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
-		public void WriteToFile(string rootFolder)
-		{
-			if (rootFolder == null)
-				throw new ArgumentNullException("rootFolder");
-			if (rootFolder.Length == 0)
-				throw new ArgumentException("rootFolder is an empty string");
-			try
-			{
-				rootFolder = Path.GetFullPath(rootFolder);
-			}
-			catch(Exception e)
-			{
-				throw new ArgumentException("rootFolder is not a valid path (see inner exception).", e);
-			}
-
-			string fullFolderPath;
-			if (RelativePath.Length > 0)
-				fullFolderPath = Path.Combine(rootFolder, RelativePath);
-			else
-				fullFolderPath = rootFolder;
-			string fullPath = Path.Combine(fullFolderPath, FileName);
-
-			// Validate the class if it is a class.
-			if(Type is ClassInfo)
-				((ClassInfo)Type).Validate();
-
-			// Generate any needed directories.
-			DefaultValues.CreateFolderPath(fullFolderPath);
-			using (StreamWriter wr = new StreamWriter(fullPath))
-			{
-				DocumentationHelper.WriteFileHeader(wr, FileName, Description);
-
-				if(DefaultValues.IncludeSubHeader)
-					WriteFileSubHeader(wr);
-
-				// Add usings.
-				if(Type.Usings.Length > 0)
-				{
-					foreach (string item in Type.Usings)
-						DocumentationHelper.WriteLine(wr, string.Format("using {0};", item), 0);
-					DocumentationHelper.WriteLine(wr);
-				}
-
-				// Write the namespace.
-				DocumentationHelper.WriteLine(wr, string.Format("namespace {0}", NameSpace), 0);
-				DocumentationHelper.WriteLine(wr, "{", 0);
-
-				// Check if its an enumeration.
-				EnumInfo enumInfo = Type as EnumInfo;
-				if (enumInfo != null)
-					enumInfo.Write(wr, 1);
-
-				// Check if its a class.
-				ClassInfo classInfo = Type as ClassInfo;
-				if (classInfo != null)
-					classInfo.Write(wr, 1);
-
-				DocumentationHelper.WriteLine(wr, "}", 0);
-			}
-		}
-
-		/// <summary>
 		///   Combines 'Name' strings with the same name in the list of string values.
 		/// </summary>
 		/// <typeparam name="T"><see cref="BaseTypeInfo"/> class or derives class.</typeparam>
@@ -178,18 +110,18 @@ namespace CSCodeGen
 		///   (Ex: Write(2)), and then place the visibility in a visibility list in preparation for sub-header documentation 
 		///   (Ex: (public, partial)). This information is used to build the file's sub-header information.
 		/// </returns>
-		private List<Tuple<string,string>> CoalesceStrings<T>(List<T> values) where T : BaseTypeInfo
+		private List<Tuple<string, string>> CoalesceStrings<T>(List<T> values) where T : BaseTypeInfo
 		{
-			List<Tuple<string,string>> returnList = new List<Tuple<string, string>>(values.Count);
+			List<Tuple<string, string>> returnList = new List<Tuple<string, string>>(values.Count);
 			int index = 0;
-			while(index < values.Count)
+			while (index < values.Count)
 			{
 				int newIndex = index;
 				int count = 0;
-				for(int j = index; j < values.Count; j++)
+				for (int j = index; j < values.Count; j++)
 				{
 					// Check all the other values for the same name and visibility.
-					if((values[index].Name == values[j].Name) && (values[index].Access == values[j].Access))
+					if ((values[index].Name == values[j].Name) && (values[index].Access == values[j].Access))
 					{
 						count++;
 						newIndex++;
@@ -201,12 +133,56 @@ namespace CSCodeGen
 				}
 
 				string name = values[index].Name;
-				if(count > 1)
+				if (count > 1)
 					name = string.Format("{0}({1})", values[index].Name, count);
 				returnList.Add(Tuple.Create<string, string>(name, GetAccessString(values[index].Access)));
 				index = newIndex;
 			}
 			return returnList;
+		}
+
+		/// <summary>
+		///   This method generates the class information for the file's sub-header, including the sub-information (child classes, enums, etc.).
+		/// </summary>
+		/// <param name="baseClassName">Name of the base class or namespace of this class.</param>
+		/// <param name="info"><see cref="ClassInfo"/> object to generate the information on.</param>
+		/// <param name="rootInfo">Root information lookup table to add this class to.</param>
+		/// <param name="subInfo">Sub-information lookup table to add this classes sub-information to.</param>
+		private void GenerateClassInfo(string baseClassName, ClassInfo info, out Dictionary<string, string> rootInfo, out List<Dictionary<string, List<Tuple<string, string>>>> subInfo)
+		{
+			subInfo = new List<Dictionary<string, List<Tuple<string, string>>>>();
+			rootInfo = new Dictionary<string, string>();
+
+			string rootClassName = string.Format("{0}.{1}", baseClassName, info.Name);
+
+			// Add the actual class first.
+			subInfo.Add(GenerateClassSubInfo(info));
+			rootInfo.Add(string.Format("{0} (class)", rootClassName), GetAccessString(info.Access));
+
+			// Add child classes next.
+			if (info.ChildClasses != null && info.ChildClasses.Length > 0)
+			{
+				foreach (ClassInfo child in info.ChildClasses)
+				{
+					List<Dictionary<string, List<Tuple<string, string>>>> childSubInfo;
+					Dictionary<string, string> childRootInfo;
+					GenerateClassInfo(rootClassName, child, out childRootInfo, out childSubInfo);
+
+					subInfo.AddRange(childSubInfo);
+					foreach (string key in childRootInfo.Keys)
+						rootInfo.Add(key, childRootInfo[key]);
+				}
+			}
+
+			// Add child enumerations next.
+			if (info.Enums != null && info.Enums.Count > 0)
+			{
+				foreach (EnumInfo en in info.Enums)
+				{
+					subInfo.Add(GenerateEnumSubInfo(en));
+					rootInfo.Add(string.Format("{0}.{1} (enum)", rootClassName, en.Name), GetAccessString(en.Access));
+				}
+			}
 		}
 
 		/// <summary>
@@ -216,61 +192,61 @@ namespace CSCodeGen
 		/// <returns>Lookup table of the sub-information.</returns>
 		private Dictionary<string, List<Tuple<string, string>>> GenerateClassSubInfo(ClassInfo info)
 		{
-			Dictionary<string, List<Tuple<string, string>>> lookup = new Dictionary<string,List<Tuple<string,string>>>();
+			Dictionary<string, List<Tuple<string, string>>> lookup = new Dictionary<string, List<Tuple<string, string>>>();
 
 			// Add Classes First.
-			if(info.ChildClasses != null && info.ChildClasses.Length > 0)
+			if (info.ChildClasses != null && info.ChildClasses.Length > 0)
 			{
 				List<ClassInfo> classList = new List<ClassInfo>(info.ChildClasses);
 				classList.Sort();
 				lookup.Add("Classes:", new List<Tuple<string, string>>(info.ChildClasses.Length));
-				foreach(ClassInfo child in classList)
-					lookup["Classes:"].Add(Tuple.Create<string,string>(child.Name, GetAccessString(child.Access)));
+				foreach (ClassInfo child in classList)
+					lookup["Classes:"].Add(Tuple.Create<string, string>(child.Name, GetAccessString(child.Access)));
 			}
 
 			// Add Enumerations Next.
-			if(info.Enums != null && info.Enums.Count > 0)
+			if (info.Enums != null && info.Enums.Count > 0)
 			{
 				info.Enums.Sort();
 				lookup.Add("Enumerations:", new List<Tuple<string, string>>(info.Enums.Count));
-				foreach(EnumInfo en in info.Enums)
+				foreach (EnumInfo en in info.Enums)
 					lookup["Enumerations:"].Add(Tuple.Create<string, string>(en.Name, GetAccessString(en.Access)));
 			}
 
 			// Add Fields Next.
-			if(info.Fields != null && info.Fields.Count > 0)
+			if (info.Fields != null && info.Fields.Count > 0)
 			{
 				info.Fields.Sort();
 				lookup.Add("Fields:", new List<Tuple<string, string>>(info.Fields.Count));
-				foreach(FieldInfo field in info.Fields)
+				foreach (FieldInfo field in info.Fields)
 					lookup["Fields:"].Add(Tuple.Create<string, string>(field.Name, GetAccessString(field.Access)));
 			}
 
 			// Add Properties Next.
-			if(info.Properties != null && info.Properties.Count > 0)
+			if (info.Properties != null && info.Properties.Count > 0)
 			{
 				info.Properties.Sort();
 				lookup.Add("Properties:", new List<Tuple<string, string>>(info.Properties.Count));
-				foreach(PropertyInfo property in info.Properties)
+				foreach (PropertyInfo property in info.Properties)
 					lookup["Properties:"].Add(Tuple.Create<string, string>(property.Name, GetAccessString(property.Access)));
 			}
 
 			// Add Constructors and Methods Next.
-			if((info.Constructors != null && info.Constructors.Count > 0) || (info.Methods != null && info.Methods.Count > 0))
+			if ((info.Constructors != null && info.Constructors.Count > 0) || (info.Methods != null && info.Methods.Count > 0))
 			{
 				int count = 0;
-				if(info.Constructors != null)
+				if (info.Constructors != null)
 					count += info.Constructors.Count;
-				if(info.Methods != null)
+				if (info.Methods != null)
 					count += info.Methods.Count;
 
 				lookup.Add("Methods:", new List<Tuple<string, string>>(count));
-				if(info.Constructors != null && info.Constructors.Count > 0)
+				if (info.Constructors != null && info.Constructors.Count > 0)
 				{
 					info.Constructors.Sort();
 					lookup["Methods:"].AddRange(CoalesceStrings(info.Constructors));
 				}
-				if(info.Methods != null && info.Methods.Count > 0)
+				if (info.Methods != null && info.Methods.Count > 0)
 				{
 					info.Methods.Sort();
 					lookup["Methods:"].AddRange(CoalesceStrings(info.Methods));
@@ -289,53 +265,41 @@ namespace CSCodeGen
 		{
 			Dictionary<string, List<Tuple<string, string>>> lookup = new Dictionary<string, List<Tuple<string, string>>>(1);
 			lookup.Add("Names:", new List<Tuple<string, string>>(info.Values.Count));
-			foreach(EnumValueInfo item in info.Values)
+			foreach (EnumValueInfo item in info.Values)
 				lookup["Names:"].Add(Tuple.Create<string, string>(item.Name, null));
 			return lookup;
 		}
 
 		/// <summary>
-		///   This method generates the class information for the file's sub-header, including the sub-information (child classes, enums, etc.).
+		///   Gets a sub-header display string representing the specified visibility (Accessibility).
 		/// </summary>
-		/// <param name="baseClassName">Name of the base class or namespace of this class.</param>
-		/// <param name="info"><see cref="ClassInfo"/> object to generate the information on.</param>
-		/// <param name="rootInfo">Root information lookup table to add this class to.</param>
-		/// <param name="subInfo">Sub-information lookup table to add this classes sub-information to.</param>
-		private void GenerateClassInfo(string baseClassName, ClassInfo info, out Dictionary<string, string> rootInfo, out List<Dictionary<string, List<Tuple<string, string>>>> subInfo)
+		/// <param name="access">Access string to parse.</param>
+		/// <returns>Formatted string ready for the sub-header.</returns>
+		/// <remarks>For example, a 'public partial' access string would be converted to '(public, partial)'.</remarks>
+		private string GetAccessString(string access)
 		{
-			subInfo = new List<Dictionary<string, List<Tuple<string, string>>>>();
-			rootInfo = new Dictionary<string,string>();
-
-			string rootClassName = string.Format("{0}.{1}", baseClassName, info.Name);
-
-			// Add the actual class first.
-			subInfo.Add(GenerateClassSubInfo(info));
-			rootInfo.Add(string.Format("{0} (class)", rootClassName), GetAccessString(info.Access));
-
-			// Add child classes next.
-			if(info.ChildClasses != null && info.ChildClasses.Length > 0)
+			string[] splits = access.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			StringBuilder sb = new StringBuilder();
+			sb.Append("(");
+			for (int i = 0; i < splits.Length; i++)
 			{
-				foreach(ClassInfo child in info.ChildClasses)
-				{
-					List<Dictionary<string, List<Tuple<string, string>>>> childSubInfo;
-					Dictionary<string, string> childRootInfo;
-					GenerateClassInfo(rootClassName, child, out childRootInfo, out childSubInfo);
-
-					subInfo.AddRange(childSubInfo);
-					foreach(string key in childRootInfo.Keys)
-						rootInfo.Add(key, childRootInfo[key]);
-				}
+				sb.Append(splits[i]);
+				if (i != splits.Length - 1)
+					sb.Append(", ");
 			}
+			sb.Append(")");
+			return sb.ToString();
+		}
 
-			// Add child enumerations next.
-			if(info.Enums != null && info.Enums.Count > 0)
-			{
-				foreach(EnumInfo en in info.Enums)
-				{
-					subInfo.Add(GenerateEnumSubInfo(en));
-					rootInfo.Add(string.Format("{0}.{1} (enum)", rootClassName, en.Name), GetAccessString(en.Access));
-				}
-			}
+		/// <summary>
+		///   Determines the maximum string length from the previous max and a text string.
+		/// </summary>
+		/// <param name="text">Text to evaluate if larger.</param>
+		/// <param name="previousMax">Previous maximum length.</param>
+		private void MaxStringLength(string text, ref int previousMax)
+		{
+			if (text.Length > previousMax)
+				previousMax = text.Length;
 		}
 
 		/// <summary>
@@ -430,35 +394,71 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
-		///   Gets a sub-header display string representing the specified visibility (Accessibility).
+		///   Writes the source code information in this object out to a file in the form of source code.
 		/// </summary>
-		/// <param name="access">Access string to parse.</param>
-		/// <returns>Formatted string ready for the sub-header.</returns>
-		/// <remarks>For example, a 'public partial' access string would be converted to '(public, partial)'.</remarks>
-		private string GetAccessString(string access)
+		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
+		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
+		public void WriteToFile(string rootFolder)
 		{
-			string[] splits = access.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			StringBuilder sb = new StringBuilder();
-			sb.Append("(");
-			for(int i = 0; i < splits.Length; i++)
+			if (rootFolder == null)
+				throw new ArgumentNullException("rootFolder");
+			if (rootFolder.Length == 0)
+				throw new ArgumentException("rootFolder is an empty string");
+			try
 			{
-				sb.Append(splits[i]);
-				if(i != splits.Length-1)
-					sb.Append(", ");
+				rootFolder = Path.GetFullPath(rootFolder);
 			}
-			sb.Append(")");
-			return sb.ToString();
-		}
+			catch (Exception e)
+			{
+				throw new ArgumentException("rootFolder is not a valid path (see inner exception).", e);
+			}
 
-		/// <summary>
-		///   Determines the maximum string length from the previous max and a text string.
-		/// </summary>
-		/// <param name="text">Text to evaluate if larger.</param>
-		/// <param name="previousMax">Previous maximum length.</param>
-		private void MaxStringLength(string text, ref int previousMax)
-		{
-			if (text.Length > previousMax)
-				previousMax = text.Length;
+			string fullFolderPath;
+			if (RelativePath.Length > 0)
+				fullFolderPath = Path.Combine(rootFolder, RelativePath);
+			else
+				fullFolderPath = rootFolder;
+			string fullPath = Path.Combine(fullFolderPath, FileName);
+
+			// Validate the class if it is a class.
+			if (Type is ClassInfo)
+				((ClassInfo)Type).Validate();
+
+			// Generate any needed directories.
+			DefaultValues.CreateFolderPath(fullFolderPath);
+			using (StreamWriter wr = new StreamWriter(fullPath))
+			{
+				DocumentationHelper.WriteFileHeader(wr, FileName, Description);
+
+				if (DefaultValues.IncludeSubHeader)
+					WriteFileSubHeader(wr);
+
+				// Add usings.
+				if (Type.Usings.Length > 0)
+				{
+					foreach (string item in Type.Usings)
+						DocumentationHelper.WriteLine(wr, string.Format("using {0};", item), 0);
+					DocumentationHelper.WriteLine(wr);
+				}
+
+				// Write the namespace.
+				DocumentationHelper.WriteLine(wr, string.Format("namespace {0}", NameSpace), 0);
+				DocumentationHelper.WriteLine(wr, "{", 0);
+
+				// Check if its an enumeration.
+				EnumInfo enumInfo = Type as EnumInfo;
+				if (enumInfo != null)
+					enumInfo.Write(wr, 1);
+
+				// Check if its a class.
+				ClassInfo classInfo = Type as ClassInfo;
+				if (classInfo != null)
+					classInfo.Write(wr, 1);
+
+				DocumentationHelper.WriteLine(wr, "}", 0);
+			}
 		}
 
 		#endregion Methods

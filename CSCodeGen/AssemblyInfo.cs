@@ -13,7 +13,6 @@
 //********************************************************************************************************************************
 using System;
 using System.IO;
-using System.Text;
 
 namespace CSCodeGen
 {
@@ -25,9 +24,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Title of the assembly.
+		///   Description of the assembly.
 		/// </summary>
-		public string Title { get; protected set; }
+		public string Description { get; protected set; }
+
+		/// <summary>
+		///   GUID of the assembly.
+		/// </summary>
+		public Guid Guid { get; protected set; }
 
 		/// <summary>
 		///   Product of the assembly.
@@ -40,19 +44,14 @@ namespace CSCodeGen
 		public Version ProductVersion { get; set; }
 
 		/// <summary>
+		///   Title of the assembly.
+		/// </summary>
+		public string Title { get; protected set; }
+
+		/// <summary>
 		///   Version of the assembly.
 		/// </summary>
 		public Version Version { get; protected set; }
-
-		/// <summary>
-		///   Description of the assembly.
-		/// </summary>
-		public string Description { get; protected set; }
-
-		/// <summary>
-		///   GUID of the assembly.
-		/// </summary>
-		public Guid Guid { get; protected set; }
 
 		#endregion Properties
 

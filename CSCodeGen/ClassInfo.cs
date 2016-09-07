@@ -26,6 +26,16 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   Array of <see cref="ClassInfo"/> objects representing the sub-classes of the class. Can be empty.
+		/// </summary>
+		public ClassInfo[] ChildClasses { get; private set; }
+
+		/// <summary>
+		///   List of <see cref="ConstructorInfo"/> objects representing the constructors of the class. Can be null.
+		/// </summary>
+		public List<ConstructorInfo> Constructors { get; private set; }
+
+		/// <summary>
 		///   List of <see cref="EnumInfo"/> objects representing the enumerations of the class. Can be null.
 		/// </summary>
 		public List<EnumInfo> Enums { get; private set; }
@@ -36,24 +46,14 @@ namespace CSCodeGen
 		public List<FieldInfo> Fields { get; private set; }
 
 		/// <summary>
-		///   List of <see cref="PropertyInfo"/> objects representing the properties of the class. Can be null.
-		/// </summary>
-		public List<PropertyInfo> Properties { get; private set; }
-
-		/// <summary>
 		///   List of <see cref="MethodInfo"/> objects representing the methods of the class. Can be null.
 		/// </summary>
 		public List<MethodInfo> Methods { get; private set; }
 
 		/// <summary>
-		///   Array of <see cref="ClassInfo"/> objects representing the sub-classes of the class. Can be empty.
+		///   List of <see cref="PropertyInfo"/> objects representing the properties of the class. Can be null.
 		/// </summary>
-		public ClassInfo[] ChildClasses { get; private set; }
-
-		/// <summary>
-		///   List of <see cref="ConstructorInfo"/> objects representing the constructors of the class. Can be null.
-		/// </summary>
-		public List<ConstructorInfo> Constructors { get; private set; }
+		public List<PropertyInfo> Properties { get; private set; }
 
 		#endregion Properties
 
@@ -86,7 +86,10 @@ namespace CSCodeGen
 			AddUsing("System.Threading.Tasks");
 		}
 
-
+		/// <summary>
+		///   Adds a child class to this class.
+		/// </summary>
+		/// <param name="child"><see cref="ClassInfo"/> object representing the child class.</param>
 		public void AddChildClass(ClassInfo child)
 		{
 			List<ClassInfo> childList = new List<ClassInfo>(ChildClasses);
@@ -96,6 +99,135 @@ namespace CSCodeGen
 			AddUsings(child.Usings);
 
 			ChildClasses = childList.ToArray();
+		}
+
+		/// <summary>
+		///   Checks the class information to ensure it is valid.
+		/// </summary>
+		public void Validate()
+		{
+			List<string> nameList = new List<string>();
+			foreach (EnumInfo info in Enums)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null EnumInfo was added to the Enums list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+					throw new InvalidOperationException(string.Format("One or more EnumInfo objects contained the same name ({0})", info.Name));
+				nameList.Add(info.Name);
+			}
+
+			nameList.Clear();
+			foreach (FieldInfo info in Fields)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null FieldInfo was added to the Fields list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+					throw new InvalidOperationException(string.Format("One or more FieldInfo objects contained the same name ({0})", info.Name));
+				nameList.Add(info.Name);
+			}
+
+			nameList.Clear();
+			foreach (PropertyInfo info in Properties)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null PropertyInfo was added to the Properties list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+					throw new InvalidOperationException(string.Format("One or more PropertyInfo objects contained the same name ({0})", info.Name));
+				nameList.Add(info.Name);
+			}
+
+			nameList.Clear();
+			List<MethodInfo> methodList = new List<MethodInfo>();
+			foreach (MethodInfo info in Methods)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null MethodInfo was added to the Methods list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+				{
+					MethodInfo duplicate = methodList[nameList.IndexOf(info.Name)];
+
+					// Names can be duplicate as long as signatures don't match.
+					if (info.Parameters.Count == duplicate.Parameters.Count)
+					{
+						bool match = true;
+						for (int i = 0; i < info.Parameters.Count; i++)
+						{
+							if (string.Compare(info.Parameters[i].Type, duplicate.Parameters[i].Type) != 0)
+							{
+								match = false;
+								i = info.Parameters.Count;
+							}
+						}
+
+						if (match)
+							throw new InvalidOperationException(string.Format("One or more MethodInfo objects contained the same name ({0}) and duplicate parameter types.", info.Name));
+					}
+				}
+				nameList.Add(info.Name);
+				methodList.Add(info);
+			}
+
+			nameList.Clear();
+			foreach (ClassInfo info in ChildClasses)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null ClassInfo was added to the ChildClasses list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+					throw new InvalidOperationException(string.Format("One or more ClassInfo objects contained the same name ({0})", info.Name));
+				nameList.Add(info.Name);
+
+				// Validate any child classes.
+				info.Validate();
+			}
+
+			nameList.Clear();
+			List<ConstructorInfo> constList = new List<ConstructorInfo>();
+			foreach (ConstructorInfo info in Constructors)
+			{
+				// Check for null objects.
+				if (info == null)
+					throw new InvalidOperationException("A null ConstructorInfo was added to the Constructors list");
+
+				// Check for duplicate names.
+				if (nameList.Contains(info.Name))
+				{
+					ConstructorInfo duplicate = constList[nameList.IndexOf(info.Name)];
+
+					// Names can be duplicate as long as signatures don't match.
+					if (info.Parameters.Count == duplicate.Parameters.Count)
+					{
+						bool match = true;
+						for (int i = 0; i < info.Parameters.Count; i++)
+						{
+							if (string.Compare(info.Parameters[i].Type, duplicate.Parameters[i].Type) != 0)
+							{
+								match = false;
+								i = info.Parameters.Count;
+							}
+						}
+
+						if (match)
+							throw new InvalidOperationException(string.Format("One or more ConstructorInfo objects contained the same name ({0}) and duplicate parameter types.", info.Name));
+					}
+				}
+				nameList.Add(info.Name);
+				constList.Add(info);
+			}
 		}
 
 		/// <summary>
@@ -217,135 +349,6 @@ namespace CSCodeGen
 
 			indentOffset--;
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
-		}
-
-		/// <summary>
-		///   Checks the class information to ensure it is valid.
-		/// </summary>
-		public void Validate()
-		{
-			List<string> nameList = new List<string>();
-			foreach (EnumInfo info in Enums)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null EnumInfo was added to the Enums list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-					throw new InvalidOperationException(string.Format("One or more EnumInfo objects contained the same name ({0})", info.Name));
-				nameList.Add(info.Name);
-			}
-
-			nameList.Clear();
-			foreach (FieldInfo info in Fields)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null FieldInfo was added to the Fields list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-					throw new InvalidOperationException(string.Format("One or more FieldInfo objects contained the same name ({0})", info.Name));
-				nameList.Add(info.Name);
-			}
-
-			nameList.Clear();
-			foreach (PropertyInfo info in Properties)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null PropertyInfo was added to the Properties list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-					throw new InvalidOperationException(string.Format("One or more PropertyInfo objects contained the same name ({0})", info.Name));
-				nameList.Add(info.Name);
-			}
-
-			nameList.Clear();
-			List<MethodInfo> methodList = new List<MethodInfo>();
-			foreach (MethodInfo info in Methods)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null MethodInfo was added to the Methods list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-				{
-					MethodInfo duplicate = methodList[nameList.IndexOf(info.Name)];
-
-					// Names can be duplicate as long as signatures don't match.
-					if (info.Parameters.Count == duplicate.Parameters.Count)
-					{
-						bool match = true;
-						for(int i = 0; i < info.Parameters.Count; i++)
-						{
-							if(string.Compare(info.Parameters[i].Type, duplicate.Parameters[i].Type) != 0)
-							{
-								match = false;
-								i = info.Parameters.Count;
-							}
-						}
-
-						if(match)
-							throw new InvalidOperationException(string.Format("One or more MethodInfo objects contained the same name ({0}) and duplicate parameter types.", info.Name));
-					}
-				}
-				nameList.Add(info.Name);
-				methodList.Add(info);
-			}
-
-			nameList.Clear();
-			foreach (ClassInfo info in ChildClasses)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null ClassInfo was added to the ChildClasses list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-					throw new InvalidOperationException(string.Format("One or more ClassInfo objects contained the same name ({0})", info.Name));
-				nameList.Add(info.Name);
-
-				// Validate any child classes.
-				info.Validate();
-			}
-
-			nameList.Clear();
-			List<ConstructorInfo> constList = new List<ConstructorInfo>();
-			foreach (ConstructorInfo info in Constructors)
-			{
-				// Check for null objects.
-				if (info == null)
-					throw new InvalidOperationException("A null ConstructorInfo was added to the Constructors list");
-
-				// Check for duplicate names.
-				if (nameList.Contains(info.Name))
-				{
-					ConstructorInfo duplicate = constList[nameList.IndexOf(info.Name)];
-
-					// Names can be duplicate as long as signatures don't match.
-					if (info.Parameters.Count == duplicate.Parameters.Count)
-					{
-						bool match = true;
-						for (int i = 0; i < info.Parameters.Count; i++)
-						{
-							if (string.Compare(info.Parameters[i].Type, duplicate.Parameters[i].Type) != 0)
-							{
-								match = false;
-								i = info.Parameters.Count;
-							}
-						}
-
-						if (match)
-							throw new InvalidOperationException(string.Format("One or more ConstructorInfo objects contained the same name ({0}) and duplicate parameter types.", info.Name));
-					}
-				}
-				nameList.Add(info.Name);
-				constList.Add(info);
-			}
 		}
 
 		#endregion Methods

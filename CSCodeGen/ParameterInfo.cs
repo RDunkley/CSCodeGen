@@ -23,6 +23,20 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   Determines whether the parameter can be empty. If true, additional comments will be added in the 
+		///   documentation that this parameter can be empty. If false, then the parameter will be checked for Length = 0 and an
+		///    exception will be thrown if so. If null, no additional comments, exceptions, or error checking will be added.
+		/// </summary>
+		public bool? CanBeEmpty { get; set; }
+
+		/// <summary>
+		///   Determines whether the parameter can be null or not. If true, additional comments will be added in the 
+		///   documentation that this parameter can be null. If false, then the parameter will be checked for null and an
+		///    exception will be thrown. If null, no additional comments, exceptions, or error checking will be added.
+		/// </summary>
+		public bool? CanBeNull { get; set; }
+
+		/// <summary>
 		///   Description of the parameter.
 		/// </summary>
 		public string Description { get; protected set; }
@@ -36,20 +50,6 @@ namespace CSCodeGen
 		///   Type of the parameter (Ex: int, string, etc.).
 		/// </summary>
 		public string Type { get; protected set; }
-
-		/// <summary>
-		///   Determines whether the parameter can be null or not. If true, additional comments will be added in the 
-		///   documentation that this parameter can be null. If false, then the parameter will be checked for null and an
-		///    exception will be thrown. If null, no additional comments, exceptions, or error checking will be added.
-		/// </summary>
-		public bool? CanBeNull { get; set; }
-
-		/// <summary>
-		///   Determines whether the parameter can be empty. If true, additional comments will be added in the 
-		///   documentation that this parameter can be empty. If false, then the parameter will be checked for Length = 0 and an
-		///    exception will be thrown if so. If null, no additional comments, exceptions, or error checking will be added.
-		/// </summary>
-		public bool? CanBeEmpty { get; set; }
 
 		#endregion Properties
 

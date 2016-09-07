@@ -23,14 +23,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   The type of exception.
-		/// </summary>
-		public string Type { get; private set; }
-
-		/// <summary>
 		///   A description of the exception.
 		/// </summary>
 		public string Description { get; private set; }
+
+		/// <summary>
+		///   The type of exception.
+		/// </summary>
+		public string Type { get; private set; }
 
 		#endregion Properties
 

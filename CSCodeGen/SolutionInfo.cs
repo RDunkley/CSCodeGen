@@ -30,14 +30,14 @@ namespace CSCodeGen
 		public string Name { get; protected set; }
 
 		/// <summary>
-		///   Array of <see cref="ProjectInfo"/> objects representing the projects in the solution.
-		/// </summary>
-		public List<BaseProject> Projects { get; private set; }
-
-		/// <summary>
 		///   Lookup table of <see cref="ProjectInfo"/> objects and their associated dependencies. Only project information objects with dependencies are contained in the table.
 		/// </summary>
 		public Dictionary<BaseProject, List<BaseProject>> ProjectDependencies { get; private set; }
+
+		/// <summary>
+		///   Array of <see cref="ProjectInfo"/> objects representing the projects in the solution.
+		/// </summary>
+		public List<BaseProject> Projects { get; private set; }
 
 		/// <summary>
 		///   Visual Studio Version to create the solution file as.

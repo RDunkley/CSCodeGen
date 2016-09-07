@@ -19,14 +19,14 @@ namespace CSCodeGen
 	public enum ProjectType
 	{
 		/// <summary>
-		///   C# library.
-		/// </summary>
-		Library,
-
-		/// <summary>
 		///   C# Executable.
 		/// </summary>
 		Exe,
+
+		/// <summary>
+		///   C# library.
+		/// </summary>
+		Library,
 
 		/// <summary>
 		///   Sandcastle Help File Builder project.

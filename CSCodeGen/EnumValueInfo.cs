@@ -24,14 +24,14 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Value of the enumerated type.
-		/// </summary>
-		public string Value { get; protected set; }
-
-		/// <summary>
 		///   Name of the type.
 		/// </summary>
 		public string Name { get; protected set; }
+
+		/// <summary>
+		///   Specifies the documentation remarks that will be generated with the type.
+		/// </summary>
+		public string Remarks { get; set; }
 
 		/// <summary>
 		///   Specifies the documentation summary that will be generated with the type.
@@ -39,9 +39,9 @@ namespace CSCodeGen
 		public string Summary { get; protected set; }
 
 		/// <summary>
-		///   Specifies the documentation remarks that will be generated with the type.
+		///   Value of the enumerated type.
 		/// </summary>
-		public string Remarks { get; set; }
+		public string Value { get; protected set; }
 
 		#endregion Properties
 

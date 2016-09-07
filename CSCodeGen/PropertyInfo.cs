@@ -25,15 +25,9 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
-		///   Type of the property (Ex: int, string, etc.).
+		///   Exceptions that could be thrown when accessing the property.
 		/// </summary>
-		public string Type { get; protected set; }
-
-		/// <summary>
-		/// Determines the accessibility of the set property. If null the property is not included (defaults to overall property accessibility).
-		/// </summary>
-		/// <value>The set accessibility string.</value>
-		public string SetAccess { get; set; }
+		public List<ExceptionInfo> Exceptions { get; private set; }
 
 		/// <summary>
 		/// Determines the accessibility of the get property. If null the property is not included (defaults to overall property accessibility).
@@ -42,21 +36,27 @@ namespace CSCodeGen
 		public string GetAccess { get; set; }
 
 		/// <summary>
-		///   Contains the code lines for the set portion of the property. If null then 'set' is not created. If empty then 'set' is created with default code.
-		/// </summary>
-		/// <value>The code lines for the property's setter.</value>
-		public string[] SetterLines { get; set; }
-
-		/// <summary>
 		///   Contains the code lines for the get portion of the property. If null then 'get' is not created. If empty then 'get' is created with default code.
 		/// </summary>
 		/// <value>The code lines for the property's getter.</value>
 		public string[] GetterLines { get; set; }
 
 		/// <summary>
-		///   Exceptions that could be thrown when accessing the property.
+		/// Determines the accessibility of the set property. If null the property is not included (defaults to overall property accessibility).
 		/// </summary>
-		public List<ExceptionInfo> Exceptions { get; private set; }
+		/// <value>The set accessibility string.</value>
+		public string SetAccess { get; set; }
+
+		/// <summary>
+		///   Contains the code lines for the set portion of the property. If null then 'set' is not created. If empty then 'set' is created with default code.
+		/// </summary>
+		/// <value>The code lines for the property's setter.</value>
+		public string[] SetterLines { get; set; }
+
+		/// <summary>
+		///   Type of the property (Ex: int, string, etc.).
+		/// </summary>
+		public string Type { get; protected set; }
 
 		#endregion Properties
 

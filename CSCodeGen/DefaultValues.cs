@@ -37,24 +37,33 @@ namespace CSCodeGen
 		public static string ApplicationVersion { get; private set; }
 
 		/// <summary>
-		///   Name of this assembly.
-		/// </summary>
-		public static string LibraryName { get; private set; }
-
-		/// <summary>
-		///   Version of this assembly.
-		/// </summary>
-		public static string LibraryVersion { get; private set; }
-
-		/// <summary>
 		///   Name of the Company that will be in the generated code.
 		/// </summary>
 		public static string CompanyName { get; set; }
 
 		/// <summary>
+		///   Template for the copyright statement.
+		/// </summary>
+		/// <remarks>This line is wrapped if needed.</remarks>
+		public static string CopyrightTemplate { get; set; }
+
+		/// <summary>
 		///   Name of the developer that will be in the generated code.
 		/// </summary>
 		public static string Developer { get; set; }
+
+		/// <summary>
+		///   Template for the file information header.
+		/// </summary>
+		/// <remarks>
+		///   These lines should not exceed <see cref="NumCharactersPerLine"/> since the lines will not be wrapped.
+		/// </remarks>
+		public static string[] FileInfoTemplate { get; set; }
+
+		/// <summary>
+		///   Flower box character to use for documentation. Can be null.
+		/// </summary>
+		public static char? FlowerBoxCharacter { get; set; }
 
 		/// <summary>
 		///   Path to the HTML Help 1.x version compiler.
@@ -69,15 +78,37 @@ namespace CSCodeGen
 		public static string HtmlHelp2xCompilerPath { get; set; }
 
 		/// <summary>
+		///   Determines whether the sub-header should be added to the file header.
+		/// </summary>
+		/// <remarks>The sub-header breaks down all the components of the class.</remarks>
+		public static bool IncludeSubHeader { get; set; }
+
+		/// <summary>
+		///   Name of this assembly.
+		/// </summary>
+		public static string LibraryName { get; private set; }
+
+		/// <summary>
+		///   Version of this assembly.
+		/// </summary>
+		public static string LibraryVersion { get; private set; }
+
+		/// <summary>
+		///   Template for the auto-generated code license.
+		/// </summary>
+		/// <remarks>This line is wrapped if needed.</remarks>
+		public static string[] LicenseTemplate { get; set; }
+
+		/// <summary>
+		///   Number of characters allowed per line. This only restricts documentation lines.
+		/// </summary>
+		public static int NumCharactersPerLine { get; set; }
+
+		/// <summary>
 		///   Path to the Sandcastle Help File Builder.
 		/// </summary>
 		/// <remarks>The path is required to generate Sandcastle Help File Builder projects.</remarks>
 		public static string SandcastlePath { get; set; }
-
-		/// <summary>
-		///   Flower box character to use for documentation. Can be null.
-		/// </summary>
-		public static char? FlowerBoxCharacter { get; set; }
 
 		/// <summary>
 		///   Number of spaces per tab.
@@ -88,37 +119,6 @@ namespace CSCodeGen
 		///   True if tabs should be used for indentation, false if spaces should be used.
 		/// </summary>
 		public static bool UseTabs { get; set; }
-
-		/// <summary>
-		///   Number of characters allowed per line. This only restricts documentation lines.
-		/// </summary>
-		public static int NumCharactersPerLine { get; set; }
-
-		/// <summary>
-		///   Template for the file information header.
-		/// </summary>
-		/// <remarks>
-		///   These lines should not exceed <see cref="NumCharactersPerLine"/> since the lines will not be wrapped.
-		/// </remarks>
-		public static string[] FileInfoTemplate { get; set; }
-
-		/// <summary>
-		///   Template for the copyright statement.
-		/// </summary>
-		/// <remarks>This line is wrapped if needed.</remarks>
-		public static string CopyrightTemplate { get; set; }
-
-		/// <summary>
-		///   Template for the auto-generated code license.
-		/// </summary>
-		/// <remarks>This line is wrapped if needed.</remarks>
-		public static string[] LicenseTemplate { get; set; }
-
-		/// <summary>
-		///   Determines whether the sub-header should be added to the file header.
-		/// </summary>
-		/// <remarks>The sub-header breaks down all the components of the class.</remarks>
-		public static bool IncludeSubHeader { get; set; }
 
 		#endregion Properties
 
