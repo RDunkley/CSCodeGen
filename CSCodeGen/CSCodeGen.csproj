@@ -60,7 +60,7 @@
     <Compile Include="PropertyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SHFB\Content.cs" />
-    <Compile Include="SHFB\ExternalAssembly.cs" />
+    <Compile Include="SHFB\NamespaceSummary.cs" />
     <Compile Include="SHFB\SHFBProject.cs" />
     <Compile Include="SolutionInfo.cs" />
     <Compile Include="DesignerInfo.cs" />

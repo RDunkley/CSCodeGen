@@ -353,8 +353,6 @@ namespace CSCodeGen
 			if(col2 < (col1 + maxSizeNames + 1))
 				col2 = col1 + maxSizeNames + 1;
 
-			if (!DocumentationHelper.WriteFlowerLine(wr, 0))
-				DocumentationHelper.WriteLine(wr, "//", 0);
 			int index = 0;
 			foreach(string key in info.Keys)
 			{

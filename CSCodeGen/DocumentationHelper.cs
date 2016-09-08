@@ -539,7 +539,7 @@ namespace CSCodeGen
 					WriteLine(wr, ConvertTemplateLineToActual(templateLine, fileName, description), 0);
 			}
 
-			// Write the copyright statement section.
+			// Write the copyright statement line.
 			if (DefaultValues.CopyrightTemplate != null && DefaultValues.CopyrightTemplate.Length > 0)
 			{
 				WriteLine(wr, string.Format("// {0}", ConvertTemplateLineToActual(DefaultValues.CopyrightTemplate, fileName, description, true)), 0);
