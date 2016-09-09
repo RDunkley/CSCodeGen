@@ -298,6 +298,7 @@ namespace CSCodeGen
 				sw.WriteLine(string.Format("		<ProjectGuid>{0}</ProjectGuid>", Guid.ToString("B")));
 				sw.WriteLine(string.Format("		<OutputType>{0}</OutputType>", GetProjectType(Type)));
 				sw.WriteLine("		<AppDesignerFolder>Properties</AppDesignerFolder>");
+				sw.WriteLine("		<SolutionDirName>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)\\..\\').Name)</SolutionDirName>");
 				sw.WriteLine(string.Format("		<RootNamespace>{0}</RootNamespace>", RootNamespace));
 				sw.WriteLine(string.Format("		<AssemblyName>{0}</AssemblyName>", Name));
 				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
