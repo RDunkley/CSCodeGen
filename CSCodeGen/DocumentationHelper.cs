@@ -430,9 +430,16 @@ namespace CSCodeGen
 				}
 			}
 
-			List<ExceptionInfo> exceptionList = new List<ExceptionInfo>();
+			Dictionary<string, List<string>> exceptionList = new Dictionary<string, List<string>>();
 			if (exceptions != null && exceptions.Length > 0)
-				exceptionList.AddRange(exceptions);
+			{
+				foreach(ExceptionInfo exception in exceptions)
+				{
+					if (!exceptionList.ContainsKey(exception.Type))
+						exceptionList.Add(exception.Type, new List<string>());
+					exceptionList[exception.Type].Add(exception.Description);
+				}
+			}
 
 			if (nullList.Count > 0)
 			{
@@ -448,7 +455,10 @@ namespace CSCodeGen
 						sb.Append(", ");
 				}
 				sb.Append("is a null reference.");
-				exceptionList.Add(new ExceptionInfo("ArgumentNullException", sb.ToString()));
+				string exception = "ArgumentNullException";
+				if (!exceptionList.ContainsKey(exception))
+					exceptionList.Add(exception, new List<string>());
+				exceptionList[exception].Add(sb.ToString());
 			}
 
 			if (emptyList.Count > 0)
@@ -465,16 +475,21 @@ namespace CSCodeGen
 						sb.Append(", ");
 				}
 				sb.Append("is an empty array.");
-				exceptionList.Add(new ExceptionInfo("ArgumentException", sb.ToString()));
+				string exception = "ArgumentException";
+				if (!exceptionList.ContainsKey(exception))
+					exceptionList.Add(exception, new List<string>());
+				exceptionList[exception].Add(sb.ToString());
 			}
 
 			if (exceptionList.Count > 0)
 			{
 				WriteLine(wr, "///", indentOffset);
 
-				exceptionList.Sort();
-				foreach (ExceptionInfo exception in exceptionList)
-					WriteExceptionDocumentationElement(wr, exception.Type, exception.Description, indentOffset);
+				List<string> exceptionNames = new List<string>(exceptionList.Count);
+				exceptionNames.AddRange(exceptionList.Keys);
+				exceptionNames.Sort();
+				foreach (string exception in exceptionNames)
+					WriteExceptionDocumentationElement(wr, exception, exceptionList[exception].ToArray(), indentOffset);
 			}
 			WriteFlowerLine(wr, indentOffset);
 		}
@@ -484,33 +499,66 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the documentation to.</param>
 		/// <param name="exceptionName">Name of the exception.</param>
-		/// <param name="description">Description of when the exception will occur.</param>
+		/// <param name="descriptions">Array of descriptions of when the exception will occur.</param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <param name="indentOffset">Number of indentations, before the code/comments start.</param>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
-		private static void WriteExceptionDocumentationElement(StreamWriter wr, string exceptionName, string description, int indentOffset)
+		private static void WriteExceptionDocumentationElement(StreamWriter wr, string exceptionName, string[] descriptions, int indentOffset)
 		{
 			exceptionName = exceptionName.Trim();
-			description = description.Trim();
 			int wsLength;
 			string ws = GenerateLeadingWhitespace(indentOffset, out wsLength);
 			string newLine = "///   ";
 
-			// The 35 below is for the '/// <exception cref=""></exception>'
-			if (description.Length + wsLength + 35 + exceptionName.Length > DefaultValues.NumCharactersPerLine)
+			if (descriptions.Length == 1)
 			{
-				// Place the tags on a separate text.
-				wr.WriteLine(string.Format("{0}/// <exception cref=\"{1}\">", ws, exceptionName));
-				wr.Write(ws);
-				wr.Write(newLine);
-				int size = wsLength + 6; // 6 is for '///   '
-				AddCommentToEndOfLine(wr, description, newLine.Length, indentOffset, newLine);
-				wr.WriteLine(string.Format("{0}/// </exception>", ws));
+				string description = descriptions[0].Trim();
+
+				// The 35 below is for the '/// <exception cref=""></exception>'
+				if (description.Length + wsLength + 35 + exceptionName.Length > DefaultValues.NumCharactersPerLine)
+				{
+					// Place the tags on a separate text.
+					wr.WriteLine(string.Format("{0}/// <exception cref=\"{1}\">", ws, exceptionName));
+					wr.Write(ws);
+					wr.Write(newLine);
+					AddCommentToEndOfLine(wr, description, newLine.Length, indentOffset, newLine);
+					wr.WriteLine(string.Format("{0}/// </exception>", ws));
+				}
+				else
+				{
+					// Place on the same text.
+					wr.WriteLine(string.Format("{0}/// <exception cref=\"{1}\">{2}</exception>", ws, exceptionName, description));
+				}
 			}
 			else
 			{
-				// Place on the same text.
-				wr.WriteLine(string.Format("{0}/// <exception cref=\"{1}\">{2}</exception>", ws, exceptionName, description));
+				// Place the descriptions in a list.
+				wr.WriteLine(string.Format("{0}/// <exception cref=\"{1}\">", ws, exceptionName));
+				wr.WriteLine(string.Format("{0}///   <list type=\"bullet\">", ws));
+				wr.WriteLine(string.Format("{0}///     <listheader>One of the following:</listheader>", ws));
+				newLine = "///       ";
+				foreach (string line in descriptions)
+				{
+					string description = line.Trim();
+
+					// The 21 below is for the '///     <item></item>'
+					if (description.Length + wsLength + 21 > DefaultValues.NumCharactersPerLine)
+					{
+						// Place the tags on a separate text.
+						wr.WriteLine(string.Format("{0}///     <item>", ws));
+						wr.Write(ws);
+						wr.Write(newLine);
+						AddCommentToEndOfLine(wr, description, newLine.Length, indentOffset, newLine);
+						wr.WriteLine(string.Format("{0}///     </item>", ws));
+					}
+					else
+					{
+						// Place on the same text.
+						wr.WriteLine(string.Format("{0}///     <item>{1}</item>", ws, description));
+					}
+				}
+				wr.WriteLine(string.Format("{0}///   </list>", ws));
+				wr.WriteLine(string.Format("{0}/// </exception>", ws));
 			}
 		}
 
