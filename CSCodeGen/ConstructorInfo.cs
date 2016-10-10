@@ -137,13 +137,13 @@ namespace CSCodeGen
 					if(!param.CanBeNull.Value)
 					{
 						DocumentationHelper.WriteLine(wr, string.Format("if({0} == null)", param.Name), indentOffset);
-						DocumentationHelper.WriteLine(wr, string.Format("	throw new ArgumentNullException(\"{0}\");", param.Name), indentOffset);
+						DocumentationHelper.WriteLine(wr, string.Format("throw new ArgumentNullException(\"{0}\");", param.Name), indentOffset + 1);
 						if(param.CanBeEmpty.HasValue)
 						{
 							if(!param.CanBeEmpty.Value)
 							{
 								DocumentationHelper.WriteLine(wr, string.Format("if({0}.Length == 0)", param.Name), indentOffset);
-								DocumentationHelper.WriteLine(wr, string.Format("	throw new ArgumentException(\"{0} is empty\");", param.Name), indentOffset);
+								DocumentationHelper.WriteLine(wr, string.Format("throw new ArgumentException(\"{0} is empty\");", param.Name), indentOffset + 1);
 							}
 						}
 					}
@@ -154,7 +154,7 @@ namespace CSCodeGen
 							if (!param.CanBeEmpty.Value)
 							{
 								DocumentationHelper.WriteLine(wr, string.Format("if({0} != null && {0}.Length == 0)", param.Name), indentOffset);
-								DocumentationHelper.WriteLine(wr, string.Format("	throw new ArgumentException(\"{0} is empty\");", param.Name), indentOffset);
+								DocumentationHelper.WriteLine(wr, string.Format("throw new ArgumentException(\"{0} is empty\");", param.Name), indentOffset + 1);
 							}
 						}
 					}
