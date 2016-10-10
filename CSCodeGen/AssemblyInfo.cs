@@ -65,8 +65,8 @@ namespace CSCodeGen
 		/// <param name="description">Description of the assembly.</param>
 		/// <param name="product">Product name of the assembly. Can be null.</param>
 		/// <param name="productVersion">Product version of the assembly. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>title</i>, <i>version</i>, or <i>description</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>title</i>, or <i>description</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="title"/>, <paramref name="version"/>, or <paramref name="description"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="title"/>, or <paramref name="description"/> is an empty string.</exception>
 		public AssemblyInfo(string title, Version version, string description, string product = null, Version productVersion = null)
 		{
 			if (title == null)
@@ -93,7 +93,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)
 		{
@@ -131,8 +131,8 @@ namespace CSCodeGen
 		///   Writes the assembly information out to a file.
 		/// </summary>
 		/// <param name="filePath">Directory that the file should be written to. If it doesn't exist it will be created.</param>
-		/// <exception cref="ArgumentNullException"><i>folder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>folder</i> is not a valid folder.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="folder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="folder"/> is not a valid folder.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void WriteToFile(string filePath)
 		{

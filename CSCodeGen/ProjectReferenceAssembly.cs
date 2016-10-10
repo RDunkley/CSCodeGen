@@ -41,8 +41,8 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="reference">Reference name of the assembly.</param>
 		/// <param name="hintPath">Hint to where the assembly is located. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>reference</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>reference</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="reference"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="reference"/> is an empty string.</exception>
 		public ProjectReferenceAssembly(string reference, string hintPath = null)
 		{
 			if (reference == null)

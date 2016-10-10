@@ -59,8 +59,8 @@ namespace CSCodeGen
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="baseString">String containing the inheritance or interface support of the type. Can be null.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public NamespaceTypeInfo(string access, string name, string summary, string baseString = null, string remarks = null) : base(access, name, summary, remarks)
 		{
 			Base = baseString;

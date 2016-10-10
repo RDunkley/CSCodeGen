@@ -162,8 +162,8 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="folder"></param>
 		/// <returns>Returns the full path to the folder.</returns>
-		/// <exception cref="ArgumentNullException"><i>folder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>folder</i> is not a valid folder.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="folder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="folder"/> is not a valid folder.</exception>
 		public static string CreateFolderPath(string folder)
 		{
 			if (folder == null)

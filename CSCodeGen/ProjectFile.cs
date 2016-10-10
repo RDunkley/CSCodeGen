@@ -45,7 +45,7 @@ namespace CSCodeGen
 		///   Instantiates a new <see cref="ProjectFile"/> object.
 		/// </summary>
 		/// <param name="source"><see cref="FileInfo"/> object representing the contents of the file.</param>
-		/// <exception cref="ArgumentNullException"><i>source</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/> is a null reference.</exception>
 		public ProjectFile(FileInfo source) : this(source, null, null)
 		{
 		}
@@ -56,7 +56,7 @@ namespace CSCodeGen
 		/// <param name="source"><see cref="FileInfo"/> object representing the contents of the file.</param>
 		/// <param name="subType">Visual Studio project sub-type of the file.</param>
 		/// <param name="dependentUpon">Other file which this file is dependent upon.</param>
-		/// <exception cref="ArgumentNullException"><i>source</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/> is a null reference.</exception>
 		public ProjectFile(FileInfo source, string subType, string dependentUpon)
 		{
 			if (source == null)

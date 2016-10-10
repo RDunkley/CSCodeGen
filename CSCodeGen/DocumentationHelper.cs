@@ -40,10 +40,10 @@ namespace CSCodeGen
 		///   If the text is longer than <see cref="DefaultValues.NumCharactersPerLine"/> then it will be split to multiple 
 		///   lines. If a space could not be found on the string to break it up on then the string will be broken on the 
 		///   boundary and a hyphen added. Identations are added to the subsequent lines of the comment prior to the 
-		///   <i>newLineText</i> being added. If the indent is so much that the comment cannot be added at all it is added
+		///   <paramref name="newLineText"/> being added. If the indent is so much that the comment cannot be added at all it is added
 		///    to the initial text and <see cref="DefaultValues.NumCharactersPerLine"/> is ignored.
 		/// </remarks>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		private static void AddCommentToEndOfLine(StreamWriter wr, string comment, int previousTextSize, int indentOffset, string newLineText = null)
 		{
@@ -310,7 +310,7 @@ namespace CSCodeGen
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the text to.</param>
 		/// <param name="line">Text to be written.</param>
 		/// <returns>Number of characters that were written.</returns>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>text</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="text"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static int Write(StreamWriter wr, string line)
 		{
@@ -329,8 +329,8 @@ namespace CSCodeGen
 		/// <param name="text">Text to be written.</param>
 		/// <param name="indentOffset">Number of indentations to include before the text.</param>
 		/// <returns>Number of characters that were written.</returns>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>text</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>text</i> is an empty sting.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="text"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="text"/> is an empty sting.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static int Write(StreamWriter wr, string text, int indentOffset)
 		{
@@ -363,8 +363,8 @@ namespace CSCodeGen
 		/// <param name="remarks">Additional remarks for the component. Can be null or empty if a 'remarks' section should not be added.</param>
 		/// <param name="parameters">Parameters of the component. Can be null or empty if it doesn't apply to the component.</param>
 		/// <param name="exceptions">Exceptions thrown by the component. Can be null or empty if it doesn't apply to the component.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="summary"/> is an empty string.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static void WriteComponentHeader(StreamWriter wr, string summary, int indentOffset, string remarks = null, string returns = null, ParameterInfo[] parameters = null, ExceptionInfo[] exceptions = null, string overloadedSummary = null)
 		{
@@ -446,7 +446,7 @@ namespace CSCodeGen
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < nullList.Count; i++)
 				{
-					sb.Append(string.Format("<i>{0}</i>", nullList[i].Name));
+					sb.Append(string.Format("<paramref name=\"{0}\"/>", nullList[i].Name));
 					if (i == nullList.Count - 2)
 						sb.Append(", or "); // Second to last.
 					else if (i == nullList.Count - 1)
@@ -466,7 +466,7 @@ namespace CSCodeGen
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < emptyList.Count; i++)
 				{
-					sb.Append(string.Format("<i>{0}</i>", emptyList[i].Name));
+					sb.Append(string.Format("<paramref name=\"{0}\"/>", emptyList[i].Name));
 					if (i == emptyList.Count - 2)
 						sb.Append(", or "); // Second to last.
 					else if (i == emptyList.Count - 1)
@@ -568,8 +568,8 @@ namespace CSCodeGen
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the file header to.</param>
 		/// <param name="fileName">Name of thee C# file to generate the header for.</param>
 		/// <param name="description">Description of the file. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>fileName</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>fileName</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="fileName"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="fileName"/> is an empty string.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static void WriteFileHeader(StreamWriter wr, string fileName, string description = null)
 		{
@@ -657,7 +657,7 @@ namespace CSCodeGen
 		///   Writes a blank text (without whitespace) to the <see cref="StreamWriter"/> object.
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the text to.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static void WriteLine(StreamWriter wr)
 		{
@@ -673,8 +673,8 @@ namespace CSCodeGen
 		/// <param name="line">Line to be written.</param>
 		/// <param name="indentOffset">Number of indentations to include before the text.</param>
 		/// <returns>Number of characters written on the text.</returns>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>text</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>text</i> is an empty sting.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="text"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="text"/> is an empty sting.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static int WriteLine(StreamWriter wr, string line, int indentOffset)
 		{
@@ -741,8 +741,8 @@ namespace CSCodeGen
 		/// <param name="nameOfRegion">Name of the region.</param>
 		/// <param name="indentOffset">Number of indentations to include before the text.</param>
 		/// <remarks>Also adds a blank text before the text.</remarks>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>nameOfRegion</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameOfRegion</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="nameOfRegion"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="nameOfRegion"/> is an empty string.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static void WriteRegionEnd(StreamWriter wr, string nameOfRegion, int indentOffset)
 		{
@@ -764,8 +764,8 @@ namespace CSCodeGen
 		/// <param name="nameOfRegion">Name of the region.</param>
 		/// <param name="indentOffset">Number of indentations to include before the text.</param>
 		/// <remarks>Also adds a blank text after the text.</remarks>
-		/// <exception cref="ArgumentNullException"><i>wr</i> or <i>nameOfRegion</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameOfRegion</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> or <paramref name="nameOfRegion"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="nameOfRegion"/> is an empty string.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public static void WriteRegionStart(StreamWriter wr, string nameOfRegion, int indentOffset)
 		{
@@ -868,7 +868,7 @@ namespace CSCodeGen
 		///   Creates documentation elements that are wrapped inside another element.
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the documentation to.</param>
-		/// <param name="wrapTag">Element to incompass the elements in the <i>tagTextLookup</i>.</param>
+		/// <param name="wrapTag">Element to incompass the elements in the <paramref name="tagTextLookup"/>.</param>
 		/// <param name="tagTextLookup">
 		///   Lookup table containing the tags to place inside the parenet element. Keys are the element names, and values are the text inside.
 		/// </param>

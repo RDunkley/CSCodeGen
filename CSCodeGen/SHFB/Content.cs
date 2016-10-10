@@ -93,8 +93,8 @@ namespace CSCodeGen.SHFB
 		/// <param name="imageID">Image ID of the content.</param>
 		/// <param name="alternateText">Alternate text associated with the content.</param>
 		/// <param name="link">Link associated with the content.</param>
-		/// <exception cref="ArgumentException"><i>include</i> is an empty string.</exception>
-		/// <exception cref="ArgumentNullException"><i>include</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="include"/> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="include"/> is a null reference.</exception>
 		public Content(string include, ContentType type, string imageID = null, string alternateText = null, string link = null)
 		{
 			if (include == null)

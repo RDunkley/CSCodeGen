@@ -62,8 +62,8 @@ namespace CSCodeGen
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
 		/// <param name="returnTypeDescription">Description of the return type. Can be null if no return type is void.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>returnType</i>, <i>name</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>returnType</i>, <i>name</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="returnType"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="returnType"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public MethodInfo(string access, string returnType, string name, string summary, string remarks = null, string returnTypeDescription = null) : base(access, name, summary, remarks)
 		{
 			if (returnType == null)
@@ -84,7 +84,7 @@ namespace CSCodeGen
 		/// <param name="other">Other <see cref="MethodInfo"/> object to compare this object to.</param>
 		/// <returns>
 		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object proceeds 
-		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
+		///   <paramref name="other"/>. Zero, they have the same sort order. Greater than zero, this object is after <paramref name="other"/> in the sort order.
 		/// </returns>
 		public int CompareTo(MethodInfo other)
 		{
@@ -124,7 +124,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> ojbect to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)
 		{

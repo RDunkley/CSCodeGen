@@ -47,8 +47,8 @@ namespace CSCodeGen
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
 		/// <param name="defaultValue">Default value that the field is assigned to.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public FieldInfo(string access, string type, string name, string summary, string remarks = null, string defaultValue = null) : base(access, name, summary, remarks)
 		{
 			if (type == "null")
@@ -64,7 +64,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)
 		{

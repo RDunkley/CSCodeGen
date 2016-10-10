@@ -59,8 +59,8 @@ namespace CSCodeGen
 		/// <param name="name">Name of the type.</param>
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public BaseTypeInfo(string access, string name, string summary, string remarks = null)
 		{
 			if (access == null)
@@ -88,7 +88,7 @@ namespace CSCodeGen
 		/// <param name="other">Other <see cref="BaseTypeInfo"/> object to compare this object to.</param>
 		/// <returns>
 		///   A 32-bit signed integer that indicates the lexical relationship between the two comparands. Less than zero, this object preceeds 
-		///   <i>other</i>. Zero, they have the same sort order. Greater than zero, this object is after <i>other</i> in the sort order.
+		///   <paramref name="other"/>. Zero, they have the same sort order. Greater than zero, this object is after <paramref name="other"/> in the sort order.
 		/// </returns>
 		public int CompareTo(BaseTypeInfo other)
 		{

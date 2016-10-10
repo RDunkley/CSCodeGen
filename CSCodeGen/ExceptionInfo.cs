@@ -41,8 +41,8 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="type">Type of exception.</param>
 		/// <param name="description">Description of the exception (why the exception could be thrown).</param>
-		/// <exception cref="ArgumentNullException"><i>type</i>, or <i>description</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>type</i> or <i>description</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="type"/>, or <paramref name="description"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="type"/> or <paramref name="description"/> is an empty string.</exception>
 		public ExceptionInfo(string type, string description)
 		{
 			if (type == null)

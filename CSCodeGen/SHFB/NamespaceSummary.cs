@@ -48,8 +48,8 @@ namespace CSCodeGen.SHFB
 		/// <param name="name">Name of the namespace.</param>
 		/// <param name="isDocumented">True if the namespace is documented, false otherwise.</param>
 		/// <param name="description">Description of the namespace. Can be null or empty.</param>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/> is a null reference.</exception>
 		public NamespaceSummary(string name, bool isDocumented, string description)
 		{
 			if (name == null)

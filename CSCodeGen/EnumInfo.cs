@@ -41,8 +41,8 @@ namespace CSCodeGen
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
 		/// <param name="baseType">The base type of the enumeration. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public EnumInfo(string access, string name, string summary, string remarks = null, string baseType = null) : base(access, name, summary, baseType, remarks)
 		{
 			Values = new List<EnumValueInfo>();
@@ -53,7 +53,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="InvalidOperationException"><see cref="Values"/> array is null or empty.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)

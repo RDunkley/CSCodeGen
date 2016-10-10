@@ -90,9 +90,9 @@ namespace CSCodeGen.SHFB
 		/// <param name="outputPath">Path to place the output in. Must be relative to the project path.</param>
 		/// <param name="contentLayout">Location of the content layout file relative to the project path.</param>
 		/// <param name="relativePath">Relative path of this project.</param>
-		/// <exception cref="ArgumentNullException"><i>name</i>, <i>outputPath</i>, or <i>contentLayout</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i>, <i>outputPath</i>, or <i>contentLayout</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>relativePath</i> is not a valid path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="outputPath"/>, or <paramref name="contentLayout"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/>, <paramref name="outputPath"/>, or <paramref name="contentLayout"/> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><paramref name="relativePath"/> is not a valid path.</exception>
 		public SHFBProject(string name, string outputPath, string contentLayout, string relativePath = null) : base(name, ProjectType.SandcastleHelpFileBuilder, relativePath)
 		{
 			if(outputPath == null)
@@ -127,8 +127,8 @@ namespace CSCodeGen.SHFB
 		///   Write the project information out to a file.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
 		/// <exception cref="InvalidOperationException">No C# projects have been added to <see cref="Projects"/>.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
 		public override void WriteToFile(string rootFolder)
@@ -354,8 +354,8 @@ namespace CSCodeGen.SHFB
 		///   Writes all the project information, classes, etc. out to various files.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the files. (The relative path will be added to this folder to generate the files.)</param>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
 		/// <exception cref="InvalidOperationException">No C# projects have been added to <see cref="Projects"/>.</exception>
 		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
 		public override void WriteToFiles(string rootFolder)

@@ -54,8 +54,8 @@ namespace CSCodeGen
 		/// <param name="value">Value of the enumerated type. Can be null or empty.</param>
 		/// <param name="summary">Summary description of the enumerated type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>name</i> or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/> or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="summary"/> is an empty string.</exception>
 		public EnumValueInfo(string name, string value, string summary, string remarks = null)
 		{
 			if (name == null)
@@ -78,7 +78,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the code to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)
 		{

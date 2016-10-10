@@ -219,8 +219,8 @@ namespace CSCodeGen
 		/// <param name="name">Name to convert to lower camel case.</param>
 		/// <param name="renameKeyWords">True if the method should rename C# keywords, false to allow them to be returned.</param>
 		/// <returns>Name in upper camel case.</returns>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
 		/// <remarks>
 		///   This method will also remove '_' characters and treat them as word breaks. For example, this_word would go to 
 		///   thisWord. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
@@ -292,8 +292,8 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="name">Name to convert to upper camel case.</param>
 		/// <returns>Name in upper camel case.</returns>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
 		/// <remarks>
 		///   This method will also remove '_' characters and treat them as word breaks. For example, 'this_word' would go to 
 		///   'ThisWord'. Any invalid C# identifier characters would be ommitted with the next character capitalized. so

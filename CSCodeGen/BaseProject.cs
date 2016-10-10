@@ -74,9 +74,9 @@ namespace CSCodeGen
 		/// <param name="name">Name of the project.</param>
 		/// <param name="type"><see cref="ProjectType"/> of the project.</param>
 		/// <param name="relativePath">Relative path that the project is represented in. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>name</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>relativePath</i> is not a valid path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><paramref name="relativePath"/> is not a valid path.</exception>
 		public BaseProject(string name, ProjectType type, string relativePath = null)
 		{
 			if (name == null)
@@ -132,8 +132,8 @@ namespace CSCodeGen
 		///   Write the project information out to a file.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
 		public abstract void WriteToFile(string rootFolder);
 
@@ -141,8 +141,8 @@ namespace CSCodeGen
 		///   Writes all the project information, classes, etc. out to various files.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the files. (The relative path will be added to this folder to generate the files.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
 		public abstract void WriteToFiles(string rootFolder);
 

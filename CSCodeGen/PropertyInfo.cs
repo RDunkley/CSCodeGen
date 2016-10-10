@@ -70,10 +70,10 @@ namespace CSCodeGen
 		/// <param name="name">Name of the type.</param>
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
-		/// <param name="getAccess">Accessibility of the getter. If null <i>access</i> is used.</param>
-		/// <param name="setAccess">Accessibility of the setter. If null <i>access</i> is used.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is an empty string.</exception>
+		/// <param name="getAccess">Accessibility of the getter. If null <paramref name="access"/> is used.</param>
+		/// <param name="setAccess">Accessibility of the setter. If null <paramref name="access"/> is used.</param>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public PropertyInfo(string access, string type, string name, string summary, string remarks = null, string getAccess = null, string setAccess = null) 
 			: this(access, type, name, summary, new string[0], new string[0], remarks, getAccess, setAccess)
 		{
@@ -89,10 +89,10 @@ namespace CSCodeGen
 		/// <param name="getterLines">Code lines for the getter.</param>
 		/// <param name="setterLines">Code lines for the setter.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
-		/// <param name="getAccess">Accessibility of the getter. If null <i>access</i> is used.</param>
-		/// <param name="setAccess">Accessibility of the setter. If null <i>access</i> is used.</param>
-		/// <exception cref="ArgumentNullException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>access</i>, <i>name</i>, <i>type</i>, or <i>summary</i> is an empty string.</exception>
+		/// <param name="getAccess">Accessibility of the getter. If null <paramref name="access"/> is used.</param>
+		/// <param name="setAccess">Accessibility of the setter. If null <paramref name="access"/> is used.</param>
+		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, <paramref name="type"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public PropertyInfo(string access, string type, string name, string summary, string[] getterLines, string[] setterLines, string remarks = null, string getAccess = null, string setAccess = null)
 			 : base(access, name, summary, remarks)
 		{
@@ -113,7 +113,7 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the property to.</param>
 		/// <param name="indentOffset">Number of indentations to add before the code.</param>
-		/// <exception cref="ArgumentNullException"><i>wr</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="wr"/> is a null reference.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the <see cref="StreamWriter"/> object.</exception>
 		public void Write(StreamWriter wr, int indentOffset)
 		{

@@ -63,8 +63,8 @@ namespace CSCodeGen
 		/// <param name="description">Description of the parameter.</param>
 		/// <param name="canBeNull">Determines whether the parameter can be null or not.</param>
 		/// <param name="canBeEmpty">Determines whether the parameter can be empty or not.</param>
-		/// <exception cref="ArgumentNullException"><i>type</i>, <i>name</i>, or <i>description</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>type</i>, <i>name</i>, or <i>description</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="description"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="description"/> is an empty string.</exception>
 		public ParameterInfo(string type, string name, string description, bool? canBeNull = null, bool? canBeEmpty = null)
 		{
 			if (type == null)

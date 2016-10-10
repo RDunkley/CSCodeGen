@@ -67,9 +67,9 @@ namespace CSCodeGen
 		/// <param name="releasePath">Release output path.</param>
 		/// <param name="type"><see cref="ProjectType"/> of the project.</param>
 		/// <param name="relativePath">Relative path that the project is represented in. Can be null.</param>
-		/// <exception cref="ArgumentNullException"><i>name</i>, <i>debugPath</i>,  or <i>releasePath</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>name</i>, <i>debugPath</i>, or <i>releasePath</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>debugPath</i>, <i>releasePath</i>, or <i>relativePath</i> is not a valid path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="debugPath"/>,  or <paramref name="releasePath"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="name"/>, <paramref name="debugPath"/>, or <paramref name="releasePath"/> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><paramref name="debugPath"/>, <paramref name="releasePath"/>, or <paramref name="relativePath"/> is not a valid path.</exception>
 		public ProjectInfo(string name, string debugPath, string releasePath, ProjectType type, string relativePath = null) : base(name, type, relativePath)
 		{
 			if (debugPath == null)
@@ -90,7 +90,7 @@ namespace CSCodeGen
 		///   Adds a file to the project.
 		/// </summary>
 		/// <param name="file"><see cref="FileInfo"/> object to add to the project.</param>
-		/// <exception cref="ArgumentNullException"><i>file</i> is a null reference.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="file"/> is a null reference.</exception>
 		public void AddFile(FileInfo file)
 		{
 			if (file == null)
@@ -108,10 +108,10 @@ namespace CSCodeGen
 		/// <param name="relativePath">Relative path where the file is represented.</param>
 		/// <param name="description">Description of the file.</param>
 		/// <param name="fileNameExtension">Extension to add to the user class filename. Can be null or empty.</param>
-		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, <i>info</i>, <i>usings</i>, or one of the strings in <i>usings</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameSpace</i>, or one of the strings in <i>usings</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
-		/// <exception cref="ArgumentException"><i>fileNameExtension</i> was specified as 'designer'. (Can not specify designer for this method).</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="nameSpace"/>, <paramref name="info"/>, <paramref name="usings"/>, or one of the strings in <paramref name="usings"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="nameSpace"/>, or one of the strings in <paramref name="usings"/> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><paramref name="relativePath"/> is defined, but is not a relative path.</exception>
+		/// <exception cref="ArgumentException"><paramref name="fileNameExtension"/> was specified as 'designer'. (Can not specify designer for this method).</exception>
 		public void AddGUIFile(string nameSpace, ClassInfo userClass, DesignerInfo designer, string relativePath = null, string description = null, string fileNameExtension = null)
 		{
 			if (string.Compare(fileNameExtension, "designer", true) == 0)
@@ -206,9 +206,9 @@ namespace CSCodeGen
 		/// <param name="relativePath">Relative path where the file is represented.</param>
 		/// <param name="description">Description of the file.</param>
 		/// <param name="fileNameExtension">Extension to add to the filename. (Ex: 'designer' would be for filename.designer.cs). Can be null or empty.</param>
-		/// <exception cref="ArgumentNullException"><i>nameSpace</i>, or <i>info</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>nameSpace</i> is an empty string.</exception>
-		/// <exception cref="ArgumentException"><i>relativePath</i> is defined, but is not a relative path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="nameSpace"/>, or <paramref name="info"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="nameSpace"/> is an empty string.</exception>
+		/// <exception cref="ArgumentException"><paramref name="relativePath"/> is defined, but is not a relative path.</exception>
 		public void AddFile(string nameSpace, NamespaceTypeInfo typeObject, string relativePath = null, string description = null, string fileNameExtension = null)
 		{
 			FileInfo file = new FileInfo(nameSpace, typeObject, relativePath, description, fileNameExtension);
@@ -247,8 +247,8 @@ namespace CSCodeGen
 		///   Write the project information out to a file.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the file. (The relative path will be added to this folder to generate the file.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to the file.</exception>
 		public override void WriteToFile(string rootFolder)
 		{
@@ -381,8 +381,8 @@ namespace CSCodeGen
 		///   Writes all the project information, classes, etc. out to various files.
 		/// </summary>
 		/// <param name="rootFolder">Root location of the files. (The relative path will be added to this folder to generate the files.)</param>
-		/// <exception cref="ArgumentNullException"><i>rootFolder</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>rootFolder</i> is not a valid folder path.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="rootFolder"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="rootFolder"/> is not a valid folder path.</exception>
 		/// <exception cref="IOException">An error occurred while writing to one of the files.</exception>
 		public override void WriteToFiles(string rootFolder)
 		{

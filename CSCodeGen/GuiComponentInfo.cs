@@ -63,8 +63,8 @@ namespace CSCodeGen
 		/// <param name="type">Type of the component.</param>
 		/// <param name="name">Name of the component.</param>
 		/// <param name="summary">Description of the component for documentation.</param>
-		/// <exception cref="ArgumentNullException"><i>type</i>, <i>name</i>, or <i>summary</i> is a null reference.</exception>
-		/// <exception cref="ArgumentException"><i>type</i>, <i>name</i>, or <i>summary</i> is an empty string.</exception>
+		/// <exception cref="ArgumentNullException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public GuiComponentInfo(string type, string name, string summary)
 		{
 			if (name == null)
