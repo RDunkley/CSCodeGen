@@ -335,10 +335,9 @@ namespace CSCodeGen.SHFB
 				sw.WriteLine("	<ItemGroup>");
 				foreach(ProjectReferenceAssembly assembly in References)
 				{
-					sw.WriteLine(string.Format("		<Reference Include=\"{0}\">", assembly.Reference));
-					if(assembly.HintPath != null)
-						sw.WriteLine(string.Format("			<HintPath>{0}</HintPath>", assembly.HintPath));
-					sw.WriteLine("		</Reference>");
+					string[] lines = assembly.GenerateProjectXMLLines();
+					foreach (string line in lines)
+						sw.WriteLine(line);
 				}
 				sw.WriteLine("	</ItemGroup>");
 				sw.WriteLine("	<ItemGroup>");

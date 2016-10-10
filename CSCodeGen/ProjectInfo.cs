@@ -333,16 +333,9 @@ namespace CSCodeGen
 				sw.WriteLine("	<ItemGroup>");
 				foreach (ProjectReferenceAssembly nameSpace in References)
 				{
-					if (nameSpace.HintPath == null)
-					{
-						sw.WriteLine(string.Format("		<Reference Include=\"{0}\" />", nameSpace.Reference));
-					}
-					else
-					{
-						sw.WriteLine(string.Format("		<Reference Include=\"{0}\" >", nameSpace.Reference));
-						sw.WriteLine(string.Format("			<HintPath>{0}</HintPath>", nameSpace.HintPath));
-						sw.WriteLine("		</Reference>");
-					}
+					string[] lines = nameSpace.GenerateProjectXMLLines();
+					foreach (string line in lines)
+						sw.WriteLine(line);
 				}
 				sw.WriteLine("	</ItemGroup>");
 				sw.WriteLine("	<ItemGroup>");

@@ -12,6 +12,7 @@
 // limitations under the License.
 //********************************************************************************************************************************
 using System;
+using System.Collections.Generic;
 
 namespace CSCodeGen
 {
@@ -32,6 +33,12 @@ namespace CSCodeGen
 		/// </summary>
 		public string Reference { get; set; }
 
+		/// <summary>
+		///   Determines if the specific version entry should be specified or not and if it should be true or false.
+		/// </summary>
+		/// <remarks>True includes it and sets it to true, false includes it and sets it to false, and null does not include it.</remarks>
+		public bool? SpecificVersion { get; set; }
+
 		#endregion Properties
 
 		#region Methods
@@ -41,9 +48,10 @@ namespace CSCodeGen
 		/// </summary>
 		/// <param name="reference">Reference name of the assembly.</param>
 		/// <param name="hintPath">Hint to where the assembly is located. Can be null.</param>
+		/// <param name="specificVersion">True if the specific version should be used, false otherwise. Null if it shouldn't be specified one way or the other.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="reference"/> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><paramref name="reference"/> is an empty string.</exception>
-		public ProjectReferenceAssembly(string reference, string hintPath = null)
+		public ProjectReferenceAssembly(string reference, string hintPath = null, bool? specificVersion = null)
 		{
 			if (reference == null)
 				throw new ArgumentNullException("reference");
@@ -52,6 +60,30 @@ namespace CSCodeGen
 
 			Reference = reference;
 			HintPath = hintPath;
+			SpecificVersion = specificVersion;
+		}
+
+		/// <summary>
+		///   Generates the XML lines for the project file that represent this project referenced assembly.
+		/// </summary>
+		/// <returns>Array of strings representing the lines in the project file.</returns>
+		public string[] GenerateProjectXMLLines()
+		{
+			List<string> codeLines = new List<string>();
+			if (HintPath == null && SpecificVersion == null)
+			{
+				codeLines.Add(string.Format("		<Reference Include=\"{0}\" />", Reference));
+			}
+			else
+			{
+				codeLines.Add(string.Format("		<Reference Include=\"{0}\" >", Reference));
+				if (HintPath != null)
+					codeLines.Add(string.Format("			<HintPath>{0}</HintPath>", HintPath));
+				if (SpecificVersion != null)
+					codeLines.Add(string.Format("			<SpecificVersion>{0}</SpecificVersion>", SpecificVersion.ToString()));
+				codeLines.Add("		</Reference>");
+			}
+			return codeLines.ToArray();
 		}
 
 		#endregion Methods
