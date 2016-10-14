@@ -45,7 +45,8 @@ namespace CSCodeGen
 		public string ReturnType { get; protected set; }
 
 		/// <summary>
-		///   Description of the return type of the method. Unused if <see cref="ReturnType"/> is 'void'. Can not be null if <see cref="ReturnType"/> is not.
+		///   Description of the return type of the method. Unused if <see cref="ReturnType"/> is 'void'. Can not be null
+		///   if <see cref="ReturnType"/> is not.
 		/// </summary>
 		public string ReturnTypeDescription { get; set; }
 
@@ -61,7 +62,7 @@ namespace CSCodeGen
 		/// <param name="name">Name of the type.</param>
 		/// <param name="summary">Summary description of the type.</param>
 		/// <param name="remarks">Additional remarks to add to the documentation.</param>
-		/// <param name="returnTypeDescription">Description of the return type. Can be null if no return type is void.</param>
+		/// <param name="returnTypeDescription">Description of the return type. Can be null if return type is void.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="access"/>, <paramref name="returnType"/>, <paramref name="name"/>, or <paramref name="summary"/> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="returnType"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public MethodInfo(string access, string returnType, string name, string summary, string remarks = null, string returnTypeDescription = null) : base(access, name, summary, remarks)

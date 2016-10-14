@@ -433,7 +433,7 @@ namespace CSCodeGen
 
 			if (remainingSpace < 1)
 			{
-				// Not enought space to add any text.
+				// Not enough space to add any text.
 				lineText = string.Empty;
 				remainingText = text;
 				return;
@@ -513,11 +513,21 @@ namespace CSCodeGen
 
 			if (numWhiteSpace + text.Length > DefaultValues.NumCharactersPerLine)
 			{
-				// Line is too long. If there is a comment we can split it up.
-				// TODO: Add the ability to split the text up.
+				// Line is too long so split it into multiple lines if possible.
+				string[] splits = SplitLine(text, indentOffset);
+				int size = 0;
+				foreach (string split in splits)
+				{
+					wr.WriteLine(split);
+					size += split.Length;
+				}
+				return size;
 			}
-			wr.Write(string.Format("{0}{1}", whiteSpace, text));
-			return numWhiteSpace + text.Length;
+			else
+			{
+				wr.Write(string.Format("{0}{1}", whiteSpace, text));
+				return numWhiteSpace + text.Length;
+			}
 		}
 
 		/// <summary>

@@ -199,10 +199,10 @@ namespace CSCodeGen
 		private static string[] GenerateFileInfoTemplate()
 		{
 			List<string> template = new List<string>();
-			template.Add("Filename:    <%filename%>");
-			template.Add("Owner:       <%developer%>");
-			template.Add("Description: <%description%>");
-			template.Add("Generated using <%appname%> version <%appversion%> with <%libraryname%>.dll version <%libraryversion%>.");
+			template.Add("// Filename:    <%filename%>");
+			template.Add("// Owner:       <%developer%>");
+			template.Add("// Description: <%description%>");
+			template.Add("// Generated using <%appname%> version <%appversion%> with <%libraryname%>.dll version <%libraryversion%>.");
 			return template.ToArray();
 		}
 

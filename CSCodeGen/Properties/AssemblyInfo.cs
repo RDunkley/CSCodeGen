@@ -1,7 +1,7 @@
 ﻿//********************************************************************************************************************************
 // Filename:    AssemblyInfo.cs
 // Owner:       Richard Dunkley
-// Description: Contains the assemlby information.
+// Description: Contains the assembly information.
 //********************************************************************************************************************************
 // Copyright © Richard Dunkley 2016
 //

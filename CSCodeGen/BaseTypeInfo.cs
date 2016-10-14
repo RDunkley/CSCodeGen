@@ -39,7 +39,7 @@ namespace CSCodeGen
 		public string OverloadedSummary { get; set; }
 
 		/// <summary>
-		///   Specifies the documentation remarks that will be generated with the type.
+		///   Specifies the documentation remarks that will be generated with the type. Can be null or empty.
 		/// </summary>
 		public string Remarks { get; set; }
 
