@@ -359,7 +359,7 @@ namespace CSCodeGen
 				int splitLocation = 0;
 				bool found = false;
 				bool splitInString = false;
-				for (int i = DefaultValues.NumCharactersPerLine - whiteSpaceSize - 1; i > 0; i--)
+				for (int i = DefaultValues.NumCharactersPerLine - whiteSpaceSize - additionalWhiteSpaceSize - 1; i > 0; i--)
 				{
 					// Check for equals.
 					if (equalSign.Contains(i) || comma.Contains(i))

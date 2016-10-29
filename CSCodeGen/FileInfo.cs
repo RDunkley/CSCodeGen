@@ -77,7 +77,7 @@ namespace CSCodeGen
 			if (nameSpace.Length == 0)
 				throw new ArgumentException("nameSpace is an empty string");
 			if (typeObject == null)
-				throw new ArgumentNullException("info");
+				throw new ArgumentNullException("typeObject");
 
 			if (relativePath == null)
 				relativePath = string.Empty;
