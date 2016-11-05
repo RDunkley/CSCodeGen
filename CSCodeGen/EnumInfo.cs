@@ -29,6 +29,11 @@ namespace CSCodeGen
 		/// </summary>
 		public List<EnumValueInfo> Values { get; private set; }
 
+		/// <summary>
+		///   True if the flags attribute should be added to the enumeration, false if not.
+		/// </summary>
+		public bool Flags { get; set; }
+
 		#endregion Properties
 
 		#region Methods
@@ -46,6 +51,7 @@ namespace CSCodeGen
 		public EnumInfo(string access, string name, string summary, string remarks = null, string baseType = null) : base(access, name, summary, baseType, remarks)
 		{
 			Values = new List<EnumValueInfo>();
+			Flags = false;
 		}
 
 		/// <summary>
@@ -67,6 +73,10 @@ namespace CSCodeGen
 				throw new InvalidOperationException("An attempt was made to write the Enumeration out to a file, but no Values were specified.");
 
 			DocumentationHelper.WriteComponentHeader(wr, Summary, indentOffset);
+
+			if (Flags)
+				DocumentationHelper.WriteLine(wr, "[Flags]", indentOffset);
+
 			if (Base != null && Base.Length > 0)
 				DocumentationHelper.WriteLine(wr, string.Format("{0} enum {1} : {2}", Access, Name, Base), indentOffset);
 			else
@@ -84,6 +94,147 @@ namespace CSCodeGen
 
 			DocumentationHelper.WriteRegionEnd(wr, "Names", indentOffset + 1);
 			DocumentationHelper.WriteLine(wr, "}", indentOffset);
+		}
+
+		/// <summary>
+		///   Generates a method that will take in one of the enumerated types and return the associated summary of the item.
+		/// </summary>
+		/// <returns><see cref="MethodInfo"/> containing the method to return the summary.</returns>
+		/// <remarks>
+		///   This method is generated to prevent having to parse the XML documentation to obtain the values if needed. If
+		///   <see cref="Flags"/> property is set to true then this method will return a comma separated list of the summaries.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">
+		///   An attempt was made to generate the method when this <see cref="EnumInfo"/>.<see cref="EnumInfo.Flags"/> property is set to true.
+		/// </exception>
+		public MethodInfo GenerateGetSummaryMethod()
+		{
+			string summary = "Gets the summary associated with the specified enumerated item.";
+			string remarks = "String representing the summary of the enumerated item.";
+			if (Flags)
+			{
+				summary = "Gets a comma separated string of summaries associated with the specified enumerated flagged item.";
+				remarks = "String representing the summaries of the enumerated item.";
+			}
+			string exception = string.Format("throw new ArgumentException(string.Format(\"The {0} type ({{0}}) was not recognized as a supported type.\", item));", Name);
+
+			MethodInfo method = new MethodInfo
+			(
+				"public",
+				"string",
+				string.Format("Get{0}Summary", Name),
+				summary,
+				remarks
+			);
+
+			method.Parameters.Add(new ParameterInfo(Name, "item", "Item to return the associated summary of."));
+			method.Exceptions.Add(new ExceptionInfo("ArgumentException", "The <paramref name=\"item\"/> was not recognized as a valid type."));
+
+			if (Flags)
+			{
+				method.CodeLines.Add("List<string> summaryList = new List<string>();");
+				foreach (EnumValueInfo info in Values)
+				{
+					method.CodeLines.Add(string.Format("if(item.HasFlag({0}.{1}))", Name, info.Name));
+					method.CodeLines.Add(string.Format("	summaryList.Add(\"{0}\");", info.Summary));
+				}
+				method.CodeLines.Add(string.Empty);
+				method.CodeLines.Add("if(summaryList.Count == 0)");
+				method.CodeLines.Add(string.Format("	{0}", exception));
+				method.CodeLines.Add(string.Empty);
+				method.CodeLines.Add("StringBuilder sb = new StringBuilder();");
+				method.CodeLines.Add("for(int i = 0; i < summaryList.Count; i++)");
+				method.CodeLines.Add("{");
+				method.CodeLines.Add("	sb.Append(sumaryList[i]);");
+				method.CodeLines.Add("	if(i != summaryList.Count - 1)");
+				method.CodeLines.Add("		sb.Append(\", \");");
+				method.CodeLines.Add("}");
+				method.CodeLines.Add("return sb.ToString();");
+			}
+			else
+			{
+				method.CodeLines.Add("switch(item)");
+				method.CodeLines.Add("{");
+				foreach (EnumValueInfo info in Values)
+				{
+					method.CodeLines.Add(string.Format("	case {0}.{1}:", Name, info.Name));
+					method.CodeLines.Add(string.Format("		return \"{0}\";", info.Summary));
+				}
+				method.CodeLines.Add("	default:");
+				method.CodeLines.Add(string.Format("		{0}", exception));
+				method.CodeLines.Add("}");
+			}
+			return method;
+		}
+
+		/// <summary>
+		///   Generates a method that will take in one of the enumerated types and return the associated remarks of the item.
+		/// </summary>
+		/// <returns><see cref="MethodInfo"/> containing the method to return the remarks.</returns>
+		/// <remarks>
+		///   This method is generated to prevent having to parse the XML documentation to obtain the values if needed. If
+		///   <see cref="Flags"/> property is set to true then this method will return a comma separated list of the remarks.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">
+		///   An attempt was made to generate the method when this <see cref="EnumInfo"/>.<see cref="EnumInfo.Flags"/> property is set to true.
+		/// </exception>
+		public MethodInfo GenerateGetRemarksMethod()
+		{
+			string summary = "Gets the remarks associated with the specified enumerated item.";
+			string remarks = "String representing the remarks of the enumerated item.";
+			if (Flags)
+			{
+				summary = "Gets a comma separated string of the remarks associated with the specified enumerated flagged item.";
+			}
+			string exception = string.Format("throw new ArgumentException(string.Format(\"The {0} type ({{0}}) was not recognized as a supported type.\", item));", Name);
+
+			MethodInfo method = new MethodInfo
+			(
+				"public",
+				"string",
+				string.Format("Get{0}Remarks", Name),
+				summary,
+				remarks
+			);
+
+			method.Parameters.Add(new ParameterInfo(Name, "item", "Item to return the associated remarks of."));
+			method.Exceptions.Add(new ExceptionInfo("ArgumentException", "The <paramref name=\"item\"/> was not recognized as a valid type."));
+
+			if (Flags)
+			{
+				method.CodeLines.Add("List<string> remarksList = new List<string>();");
+				foreach (EnumValueInfo info in Values)
+				{
+					method.CodeLines.Add(string.Format("if(item.HasFlag({0}.{1}))", Name, info.Name));
+					method.CodeLines.Add(string.Format("	remarksList.Add(\"{0}\");", info.Remarks));
+				}
+				method.CodeLines.Add(string.Empty);
+				method.CodeLines.Add("if(remarksList.Count == 0)");
+				method.CodeLines.Add(string.Format("	{0}", exception));
+				method.CodeLines.Add(string.Empty);
+				method.CodeLines.Add("StringBuilder sb = new StringBuilder();");
+				method.CodeLines.Add("for(int i = 0; i < remarksList.Count; i++)");
+				method.CodeLines.Add("{");
+				method.CodeLines.Add("	sb.Append(remarksList[i]);");
+				method.CodeLines.Add("	if(i != remarksList.Count - 1)");
+				method.CodeLines.Add("		sb.Append(\", \");");
+				method.CodeLines.Add("}");
+				method.CodeLines.Add("return sb.ToString();");
+			}
+			else
+			{
+				method.CodeLines.Add("switch(item)");
+				method.CodeLines.Add("{");
+				foreach (EnumValueInfo info in Values)
+				{
+					method.CodeLines.Add(string.Format("	case {0}.{1}:", Name, info.Name));
+					method.CodeLines.Add(string.Format("		return \"{0}\";", info.Remarks));
+				}
+				method.CodeLines.Add("	default:");
+				method.CodeLines.Add(string.Format("		{0}", exception));
+				method.CodeLines.Add("}");
+			}
+			return method;
 		}
 
 		#endregion Methods
