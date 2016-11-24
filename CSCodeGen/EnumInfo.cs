@@ -171,7 +171,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Generates a method that will take in one of the enumerated types and return the associated remarks of the item.
 		/// </summary>
-		/// <returns><see cref="MethodInfo"/> containing the method to return the remarks.</returns>
+		/// <returns><see cref="MethodInfo"/> containing the method to return the remarks. Can be null if no items have remarks.</returns>
 		/// <remarks>
 		///   This method is generated to prevent having to parse the XML documentation to obtain the values if needed. If
 		///   <see cref="Flags"/> property is set to true then this method will return a comma separated list of the remarks.
@@ -181,8 +181,21 @@ namespace CSCodeGen
 		/// </exception>
 		public MethodInfo GenerateGetRemarksMethod()
 		{
+			bool foundOne = false;
+			foreach (EnumValueInfo info in Values)
+			{
+				if (!string.IsNullOrWhiteSpace(info.Remarks))
+				{
+					foundOne = true;
+					break;
+				}
+			}
+
+			if (!foundOne)
+				return null;
+
 			string summary = "Gets the remarks associated with the specified enumerated item.";
-			string returns = "String representing the remarks of the enumerated item.";
+			string returns = "String representing the remarks of the enumerated item or null if the item does not contain a remark.";
 			if (Flags)
 			{
 				summary = "Gets a comma separated string of the remarks associated with the specified enumerated flagged item.";
@@ -208,12 +221,15 @@ namespace CSCodeGen
 				method.CodeLines.Add("List<string> remarksList = new List<string>();");
 				foreach (EnumValueInfo info in Values)
 				{
-					method.CodeLines.Add(string.Format("if(item.HasFlag({0}.{1}))", Name, info.Name));
-					method.CodeLines.Add(string.Format("	remarksList.Add(\"{0}\");", info.Remarks));
+					if (!string.IsNullOrWhiteSpace(info.Remarks))
+					{
+						method.CodeLines.Add(string.Format("if(item.HasFlag({0}.{1}))", Name, info.Name));
+						method.CodeLines.Add(string.Format("	remarksList.Add(\"{0}\");", info.Remarks));
+					}
 				}
 				method.CodeLines.Add(string.Empty);
 				method.CodeLines.Add("if(remarksList.Count == 0)");
-				method.CodeLines.Add(string.Format("	{0}", exception));
+				method.CodeLines.Add("	return null;");
 				method.CodeLines.Add(string.Empty);
 				method.CodeLines.Add("StringBuilder sb = new StringBuilder();");
 				method.CodeLines.Add("for(int i = 0; i < remarksList.Count; i++)");
@@ -231,7 +247,10 @@ namespace CSCodeGen
 				foreach (EnumValueInfo info in Values)
 				{
 					method.CodeLines.Add(string.Format("	case {0}.{1}:", Name, info.Name));
-					method.CodeLines.Add(string.Format("		return \"{0}\";", info.Remarks));
+					if (!string.IsNullOrWhiteSpace(info.Remarks))
+						method.CodeLines.Add(string.Format("		return \"{0}\";", info.Remarks));
+					else
+						method.CodeLines.Add("		return null;");
 				}
 				method.CodeLines.Add("	default:");
 				method.CodeLines.Add(string.Format("		{0}", exception));
