@@ -146,7 +146,7 @@ namespace CSCodeGen
 				method.CodeLines.Add("StringBuilder sb = new StringBuilder();");
 				method.CodeLines.Add("for(int i = 0; i < summaryList.Count; i++)");
 				method.CodeLines.Add("{");
-				method.CodeLines.Add("	sb.Append(sumaryList[i]);");
+				method.CodeLines.Add("	sb.Append(summaryList[i]);");
 				method.CodeLines.Add("	if(i != summaryList.Count - 1)");
 				method.CodeLines.Add("		sb.Append(\", \");");
 				method.CodeLines.Add("}");
