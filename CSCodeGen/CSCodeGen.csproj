@@ -40,6 +40,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseProject.cs" />
     <Compile Include="BaseTypeInfo.cs" />
+    <Compile Include="BinaryUtility.cs" />
     <Compile Include="ClassInfo.cs" />
     <Compile Include="ConstructorInfo.cs" />
     <Compile Include="DefaultValues.cs" />

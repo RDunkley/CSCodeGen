@@ -110,11 +110,11 @@ namespace CSCodeGen
 		public MethodInfo GenerateGetSummaryMethod()
 		{
 			string summary = "Gets the summary associated with the specified enumerated item.";
-			string remarks = "String representing the summary of the enumerated item.";
+			string returns = "String representing the summary of the enumerated item.";
 			if (Flags)
 			{
 				summary = "Gets a comma separated string of summaries associated with the specified enumerated flagged item.";
-				remarks = "String representing the summaries of the enumerated item.";
+				returns = "String representing the summaries of the enumerated item.";
 			}
 			string exception = string.Format("throw new ArgumentException(string.Format(\"The {0} type ({{0}}) was not recognized as a supported type.\", item));", Name);
 
@@ -124,7 +124,8 @@ namespace CSCodeGen
 				"string",
 				string.Format("Get{0}Summary", Name),
 				summary,
-				remarks
+				null,
+				returns
 			);
 
 			method.Parameters.Add(new ParameterInfo(Name, "item", "Item to return the associated summary of."));
@@ -181,10 +182,11 @@ namespace CSCodeGen
 		public MethodInfo GenerateGetRemarksMethod()
 		{
 			string summary = "Gets the remarks associated with the specified enumerated item.";
-			string remarks = "String representing the remarks of the enumerated item.";
+			string returns = "String representing the remarks of the enumerated item.";
 			if (Flags)
 			{
 				summary = "Gets a comma separated string of the remarks associated with the specified enumerated flagged item.";
+				returns = "Comma separated string representing the remarks.";
 			}
 			string exception = string.Format("throw new ArgumentException(string.Format(\"The {0} type ({{0}}) was not recognized as a supported type.\", item));", Name);
 
@@ -194,7 +196,8 @@ namespace CSCodeGen
 				"string",
 				string.Format("Get{0}Remarks", Name),
 				summary,
-				remarks
+				null,
+				returns
 			);
 
 			method.Parameters.Add(new ParameterInfo(Name, "item", "Item to return the associated remarks of."));
