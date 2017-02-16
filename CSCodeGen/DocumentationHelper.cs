@@ -39,7 +39,7 @@ namespace CSCodeGen
 		/// <remarks>
 		///   If the text is longer than <see cref="DefaultValues.NumCharactersPerLine"/> then it will be split to multiple 
 		///   lines. If a space could not be found on the string to break it up on then the string will be broken on the 
-		///   boundary and a hyphen added. Identations are added to the subsequent lines of the comment prior to the 
+		///   boundary and a hyphen added. Indentations are added to the subsequent lines of the comment prior to the 
 		///   <paramref name="newLineText"/> being added. If the indent is so much that the comment cannot be added at all it is added
 		///    to the initial text and <see cref="DefaultValues.NumCharactersPerLine"/> is ignored.
 		/// </remarks>
@@ -265,7 +265,7 @@ namespace CSCodeGen
 					if (inString)
 					{
 						// If inString is true then must not be in position 0 so we don't need to worry about i-1.
-						// Only assume end of string if the '\' character does not preceed it.
+						// Only assume end of string if the '\' character does not precede it.
 						if (line[i - 1] != '\\')
 						{
 							stringLookup.Add(start, i - start);
@@ -1055,9 +1055,9 @@ namespace CSCodeGen
 		///   Creates documentation elements that are wrapped inside another element.
 		/// </summary>
 		/// <param name="wr"><see cref="StreamWriter"/> object to write the documentation to.</param>
-		/// <param name="wrapTag">Element to incompass the elements in the <paramref name="tagTextLookup"/>.</param>
+		/// <param name="wrapTag">Element to encompass the elements in the <paramref name="tagTextLookup"/>.</param>
 		/// <param name="tagTextLookup">
-		///   Lookup table containing the tags to place inside the parenet element. Keys are the element names, and values are the text inside.
+		///   Lookup table containing the tags to place inside the parent element. Keys are the element names, and values are the text inside.
 		/// </param>
 		/// <param name="indentOffset">Number of indentations, before the code/comments start.</param>
 		/// <remarks>

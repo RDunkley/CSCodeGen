@@ -85,7 +85,7 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
-		///   Add an additonal using to the Usings of this <see cref="NamespaceTypeInfo"/> object.
+		///   Add an additional using to the Usings of this <see cref="NamespaceTypeInfo"/> object.
 		/// </summary>
 		/// <param name="usingString">Using string to be added.</param>
 		public void AddUsing(string usingString)

@@ -1,7 +1,7 @@
 ﻿//********************************************************************************************************************************
 // Filename:    ClassInfo.cs
 // Owner:       Richard Dunkley
-// Description: Contains the data components to represent a symplified external reference in a C# project.
+// Description: Contains the data components to represent a simplified external reference in a C# project.
 //********************************************************************************************************************************
 // Copyright © Richard Dunkley 2016
 //

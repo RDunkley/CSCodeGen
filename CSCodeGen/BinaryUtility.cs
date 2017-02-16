@@ -12,11 +12,7 @@
 // limitations under the License.
 //********************************************************************************************************************************
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSCodeGen
 {
@@ -33,7 +29,7 @@ namespace CSCodeGen
 		public enum IntegerFormat
 		{
 			/// <summary>
-			///   Hexadecimal type 1 format. The hexadecimal is preceeded by a '0x' (Ex: 0xA5).
+			///   Hexadecimal type 1 format. The hexadecimal is preceded by a '0x' (Ex: 0xA5).
 			/// </summary>
 			HexType1,
 
@@ -269,7 +265,7 @@ namespace CSCodeGen
 
 			if (maxValue.CompareTo(GetMaxValue()) < 0)
 			{
-				// Verify that the value has not excedded the specified maximum size.
+				// Verify that the value has not exceeded the specified maximum size.
 				if (returnValue.CompareTo(maxValue) > 0)
 					throw new ArgumentException(string.Format("The integral value specified ({0}) is larger than the maximum value allowed ({1}).", value, GetMaxValue().ToString()));
 			}
@@ -285,7 +281,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Parses the bit string to the integral type.
 		/// </summary>
-		/// <param name="bitString">String of '1's and '0's making up the bitstream.</param>
+		/// <param name="bitString">String of '1's and '0's making up the bit stream.</param>
 		/// <returns>Parsed integral type.</returns>
 		/// <exception cref="ArgumentException"><paramref name="bitString"/> length is longer than the number of bits allowed in the integral type or one of the characters is not a '1' or '0'.</exception>
 		public static T ParseBitString(string bitString)
@@ -436,7 +432,7 @@ namespace CSCodeGen
 
 			if (maxValue.CompareTo(GetMaxValue()) < 0)
 			{
-				// Verify that the value has not excedded the specified maximum size.
+				// Verify that the value has not exceeded the specified maximum size.
 				if (returnValue.CompareTo(maxValue) > 0)
 					return false;
 			}
@@ -452,7 +448,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Attempts to parse the bit string.
 		/// </summary>
-		/// <param name="bitString">String of '1's and '0's making up the bitstream.</param>
+		/// <param name="bitString">String of '1's and '0's making up the bit stream.</param>
 		/// <param name="value">Parsed integral type or zero if method returns false.</param>
 		/// <returns>True if the binary string was successfully parsed, false otherwise.</returns>
 		public static bool TryParseBitString(string bitString, out T value)

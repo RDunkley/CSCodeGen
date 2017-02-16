@@ -223,7 +223,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
 		/// <remarks>
 		///   This method will also remove '_' characters and treat them as word breaks. For example, this_word would go to 
-		///   thisWord. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
+		///   thisWord. Any invalid C# identifier characters would be omitted with the next character capitalized. so
 		///   'some word' would end up as 'someWord' or 'test@mail.com' would be 'testMailCom'.
 		/// </remarks>
 		public static string GetLowerCamelCase(string name, bool renameKeyWords)
@@ -296,7 +296,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentException"><paramref name="name"/> is an empty string.</exception>
 		/// <remarks>
 		///   This method will also remove '_' characters and treat them as word breaks. For example, 'this_word' would go to 
-		///   'ThisWord'. Any invalid C# identifier characters would be ommitted with the next character capitalized. so
+		///   'ThisWord'. Any invalid C# identifier characters would be omitted with the next character capitalized. so
 		///   'some word' would end up as 'SomeWord' or 'test@mail.com' would be 'TestMailCom'.
 		/// </remarks>
 		public static string GetUpperCamelCase(string name)
