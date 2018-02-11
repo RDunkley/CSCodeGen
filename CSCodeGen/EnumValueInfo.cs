@@ -19,7 +19,7 @@ namespace CSCodeGen
 	/// <summary>
 	///   Represents an enumerated type in a C# enumeration.
 	/// </summary>
-	public class EnumValueInfo
+	public class EnumValueInfo : IComparable
 	{
 		#region Properties
 
@@ -71,6 +71,28 @@ namespace CSCodeGen
 			Value = value;
 			Summary = summary;
 			Remarks = remarks;
+		}
+
+		/// <summary>
+		///   Compares another <see cref="EnumValueInfo"/> object with this object.
+		/// </summary>
+		/// <param name="obj"><see cref="EnumValueInfo"/> to compare to this one.</param>
+		/// <returns>
+		///   Integer with a less than zero value if this object precedes <paramref name="obj"/> in the sort order. Zero if the
+		///   instances occur in the same position (may not be the same object). Greater than zero if this instance follows 
+		///   <paramref name="obj"/> in the sort order.
+		/// </returns>
+		/// <exception cref="ArgumentException"><paramref name="obj"/> is not of type <see cref="EnumValueInfo"/>.</exception>
+		public int CompareTo(object obj)
+		{
+			if (obj == null)
+				return 1;
+
+			EnumValueInfo other = obj as EnumValueInfo;
+			if (other != null)
+				return string.Compare(this.Name, other.Name);
+			else
+				throw new ArgumentException("obj is not of type EnumValueInfo.");
 		}
 
 		/// <summary>

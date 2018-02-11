@@ -25,6 +25,12 @@ namespace CSCodeGen
 		#region Properties
 
 		/// <summary>
+		///   True if the None option (no flags) should be added to the enumeration, false if not.
+		/// </summary>
+		/// <remarks>Only valid if <see cref="Flags"/> is true. It also only adds a 'None' option if it has not already been specified.</remarks>
+		public bool AddNoneFlag { get; set; }
+
+		/// <summary>
 		///   List of <see cref="EnumValueInfo"/> objects representing the values in the enumeration.
 		/// </summary>
 		public List<EnumValueInfo> Values { get; private set; }
@@ -52,6 +58,7 @@ namespace CSCodeGen
 		{
 			Values = new List<EnumValueInfo>();
 			Flags = false;
+			AddNoneFlag = true;
 		}
 
 		/// <summary>
@@ -84,11 +91,28 @@ namespace CSCodeGen
 			DocumentationHelper.WriteLine(wr, "{", indentOffset);
 			DocumentationHelper.WriteRegionStart(wr, "Names", indentOffset + 1);
 
-			// Write out each value in the enumeration.
-			for(int i = 0; i < Values.Count; i++)
+			List<EnumValueInfo> values = new List<EnumValueInfo>(Values);
+			if(Flags && AddNoneFlag)
 			{
-				Values[i].Write(wr, indentOffset + 1);
-				if (i < Values.Count - 1)
+				bool found = false;
+				for(int i = 0; i < Values.Count; i++)
+				{
+					if(string.Compare(Values[i].Name, "none", true)==0)
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+					values.Add(new EnumValueInfo("None", "0", "Represents the object when none of the flags are present."));
+			}
+
+			// Write out each value in the enumeration.
+			for(int i = 0; i < values.Count; i++)
+			{
+				values[i].Write(wr, indentOffset + 1);
+				if (i < values.Count - 1)
 					wr.WriteLine();
 			}
 
