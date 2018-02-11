@@ -1088,7 +1088,6 @@ namespace CSCodeGen
 						// Place the tags on a separate line.
 						wr.WriteLine(string.Format("{0}/// <{1}>", ws, wrapTag));
 						wr.Write(ws);
-						wr.Write(newLine);
 
 						// The 11 below is for the '///   <></>' characters.
 						if(tagTextLookup[key].Length + wsLength + (2 * key.Length) + 11 > DefaultValues.NumCharactersPerLine)
