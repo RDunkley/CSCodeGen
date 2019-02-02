@@ -28,6 +28,10 @@ namespace CSCodeGen
 		/// <summary>
 		///   Array of <see cref="ClassInfo"/> objects representing the sub-classes of the class. Can be empty.
 		/// </summary>
+		/// <remarks>
+		///   This property is an array instead of a list because the classes need to be added separately so the using statements
+		///   can also be added.
+		/// </remarks>
 		public ClassInfo[] ChildClasses { get; private set; }
 
 		/// <summary>
