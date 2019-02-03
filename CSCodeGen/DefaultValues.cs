@@ -12,10 +12,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
+using CSCodeGen.Parse;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security;
 
 namespace CSCodeGen
 {
@@ -184,6 +186,71 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
+		///   Generates <see cref="SettingInfo"/> object array to represents the current values of the static properties of this class.
+		/// </summary>
+		/// <returns><see cref="SettingInfo"/> array containing all the current values.</returns>
+		/// <remarks>The static properties without a public setter are not stored since these values are set by this class internally.</remarks>
+		public static SettingInfo[] ExportValues()
+		{
+			List<SettingInfo> setList = new List<SettingInfo>(new SettingInfo[]
+			{
+				new SettingInfo("CompanyName", CompanyName),
+				new SettingInfo("CopyrightTemplate", CopyrightTemplate),
+				new SettingInfo("Developer", Developer),
+				new SettingInfo("HtmlHelp1xCompilerPath", HtmlHelp1xCompilerPath),
+				new SettingInfo("HtmlHelp2xCompilerPath", HtmlHelp2xCompilerPath),
+				Settings.GetSettingFromType<bool>("IncludeSubHeader", IncludeSubHeader),
+				Settings.GetSettingFromType<int>("NumCharactersPerLine", NumCharactersPerLine),
+				new SettingInfo("SandcastlePath", SandcastlePath),
+				Settings.GetSettingFromType<int>("TabSize", TabSize),
+				Settings.GetSettingFromType<bool>("UseTabs", UseTabs)
+			});
+			setList.AddRange(Settings.GetSettingsFromArray<string>("FileInfoTemplate", FileInfoTemplate));
+			if (FlowerBoxCharacter.HasValue)
+				setList.Add(Settings.GetSettingFromType<char>("FlowerBoxCharacter", FlowerBoxCharacter.Value));
+			setList.AddRange(Settings.GetSettingsFromArray<string>("LicenseTemplate", LicenseTemplate));
+			return setList.ToArray();
+		}
+
+		/// <summary>
+		///   Exports the current values of the static properties of this class to a file.
+		/// </summary>
+		/// <param name="filePath">File to write the values to.</param>
+		/// <param name="overwrite">True if an existing file should be overwritten, false otherwise.</param>
+		/// <exception cref="ArgumentNullException"><paramref name="filePath"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="filePath"/> is not a valid file path or it already exists and <paramref name="overwrite"/> is false.</exception>
+		public static void ExportValues(string filePath, bool overwrite = false)
+		{
+			if (filePath == null)
+				throw new ArgumentNullException("filePath");
+			try
+			{
+				filePath = Path.GetFullPath(filePath);
+			}
+			catch(Exception e)
+			{
+				if(e is SecurityException || e is NotSupportedException || e is PathTooLongException)
+					throw new ArgumentException(string.Format("The file path specified ({0}) is invalid: {1}", filePath, e.Message), e);
+				throw;
+			}
+
+			if(File.Exists(filePath) && !overwrite)
+				throw new ArgumentException(string.Format("The file path specified ({0}) already exists.", filePath));
+
+			Settings root = new Settings(DateTime.Now, new Version(1, 0), ExportValues());
+			SettingsFile sf = new SettingsFile(root);
+
+			try
+			{
+				sf.ExportToXML(filePath);
+			}
+			catch(InvalidOperationException e)
+			{
+				throw new ArgumentException(string.Format("The file path specified ({0}) could not be opened.", filePath), e);
+			}
+		}
+
+		/// <summary>
 		///   Generates a default Copyright template.
 		/// </summary>
 		/// <returns>Array of the lines in the template.</returns>
@@ -231,6 +298,83 @@ namespace CSCodeGen
 			//template.Add("	<%filename%> - Replaced with the file name being generated.");
 			//template.Add("	<%description%> - Replaced with a description of the file being generated.");
 			return template.ToArray();
+		}
+
+		/// <summary>
+		///   Imports the values of the static properties of this class from the specified file.
+		/// </summary>
+		/// <param name="filePath">File to import the values from.</param>
+		public static void ImportValues(string filePath)
+		{
+			if (filePath == null)
+				throw new ArgumentNullException("filePath");
+			try
+			{
+				filePath = Path.GetFullPath(filePath);
+			}
+			catch (Exception e)
+			{
+				if (e is SecurityException || e is NotSupportedException || e is PathTooLongException)
+					throw new ArgumentException(string.Format("The file path specified ({0}) is invalid: {1}", filePath, e.Message), e);
+				throw;
+			}
+
+			if (!File.Exists(filePath))
+				throw new ArgumentException(string.Format("The file path specified ({0}) does not exist.", filePath));
+
+			SettingsFile sf;
+			try
+			{
+				sf = new SettingsFile(filePath);
+			}
+			catch (Exception e)
+			{
+				if (e is InvalidOperationException || e is InvalidDataException)
+					throw new ArgumentException(string.Format("The file path specified ({0}) could not be loaded: {1}", filePath, e.Message), e);
+				throw;
+			}
+
+			ImportValues(sf.Root);
+		}
+
+		/// <summary>
+		///   Imports the values of the static properties of this class from the specified <see cref="Settings"/> object.
+		/// </summary>
+		/// <param name="settings"><see cref="Settings"/> object to pull the values from.</param>
+		public static void ImportValues(Settings settings)
+		{
+			SettingInfo value = settings.FindSetting("CompanyName");
+			if (value != null)
+				CompanyName = value.Value;
+			value = settings.FindSetting("CopyrightTemplate");
+			if (value != null)
+				CopyrightTemplate = value.Value;
+			value = settings.FindSetting("Developer");
+			if (value != null)
+				Developer = value.Value;
+			if (settings.TryGetArrayFromSettings<string>("FileInfoTemplate", out string[] values))
+				FileInfoTemplate = values;
+			if (settings.TryGetTypeFromSetting<char>("FlowerBoxCharacter", out char charValue))
+				FlowerBoxCharacter = charValue;
+			value = settings.FindSetting("HtmlHelp1xCompilerPath");
+			if (value != null)
+				HtmlHelp1xCompilerPath = value.Value;
+			value = settings.FindSetting("HtmlHelp2xCompilerPath");
+			if (value != null)
+				HtmlHelp2xCompilerPath = value.Value;
+			if (settings.TryGetTypeFromSetting<bool>("IncludeSubHeader", out bool boolValue))
+				IncludeSubHeader = boolValue;
+			if (settings.TryGetArrayFromSettings<string>("LicenseTemplate", out values))
+				LicenseTemplate = values;
+			if (settings.TryGetTypeFromSetting<int>("NumCharactersPerLine", out int intValue))
+				NumCharactersPerLine = intValue;
+			value = settings.FindSetting("SandcastlePath");
+			if (value != null)
+				SandcastlePath = value.Value;
+			if (settings.TryGetTypeFromSetting<int>("TabSize", out intValue))
+				TabSize = intValue;
+			if (settings.TryGetTypeFromSetting<bool>("UseTabs", out boolValue))
+				UseTabs = boolValue;
 		}
 
 		#endregion Methods

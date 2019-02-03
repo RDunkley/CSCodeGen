@@ -35,6 +35,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -54,6 +55,11 @@
     <Compile Include="MethodInfo.cs" />
     <Compile Include="NamespaceTypeInfo.cs" />
     <Compile Include="ParameterInfo.cs" />
+    <Compile Include="Parse\SettingInfo.AutoGen.cs" />
+    <Compile Include="Parse\Settings.AutoGen.cs" />
+    <Compile Include="Parse\Settings.cs" />
+    <Compile Include="Parse\SettingsFile.AutoGen.cs" />
+    <Compile Include="Parse\SettingsFile.cs" />
     <Compile Include="ProjectFile.cs" />
     <Compile Include="ProjectInfo.cs" />
     <Compile Include="ProjectReferenceAssembly.cs" />
