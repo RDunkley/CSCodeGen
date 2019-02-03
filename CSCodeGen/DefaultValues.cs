@@ -304,6 +304,8 @@ namespace CSCodeGen
 		///   Imports the values of the static properties of this class from the specified file.
 		/// </summary>
 		/// <param name="filePath">File to import the values from.</param>
+		/// <exception cref="ArgumentNullException"><paramref name="filePath"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException"><paramref name="filePath"/> is not a valid file path.</exception>
 		public static void ImportValues(string filePath)
 		{
 			if (filePath == null)
