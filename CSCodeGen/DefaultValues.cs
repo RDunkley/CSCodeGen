@@ -148,7 +148,7 @@ namespace CSCodeGen
 			LibraryVersion = library.Version.ToString(3);
 
 			CompanyName = "Specify your company name here by setting CSCodeGen.DefaultValues.CompanyName property";
-			Developer = "Specify your developer name here by setting CSCodeGen.DefaultValues.Developer property";
+			Developer = Environment.UserName;
 			FlowerBoxCharacter = '*';
 			TabSize = 4;
 			UseTabs = true;
@@ -192,24 +192,7 @@ namespace CSCodeGen
 		/// <remarks>The static properties without a public setter are not stored since these values are set by this class internally.</remarks>
 		public static SettingInfo[] ExportValues()
 		{
-			List<SettingInfo> setList = new List<SettingInfo>(new SettingInfo[]
-			{
-				new SettingInfo("CompanyName", CompanyName),
-				new SettingInfo("CopyrightTemplate", CopyrightTemplate),
-				new SettingInfo("Developer", Developer),
-				new SettingInfo("HtmlHelp1xCompilerPath", HtmlHelp1xCompilerPath),
-				new SettingInfo("HtmlHelp2xCompilerPath", HtmlHelp2xCompilerPath),
-				Settings.GetSettingFromType<bool>("IncludeSubHeader", IncludeSubHeader),
-				Settings.GetSettingFromType<int>("NumCharactersPerLine", NumCharactersPerLine),
-				new SettingInfo("SandcastlePath", SandcastlePath),
-				Settings.GetSettingFromType<int>("TabSize", TabSize),
-				Settings.GetSettingFromType<bool>("UseTabs", UseTabs)
-			});
-			setList.AddRange(Settings.GetSettingsFromArray<string>("FileInfoTemplate", FileInfoTemplate));
-			if (FlowerBoxCharacter.HasValue)
-				setList.Add(Settings.GetSettingFromType<char>("FlowerBoxCharacter", FlowerBoxCharacter.Value));
-			setList.AddRange(Settings.GetSettingsFromArray<string>("LicenseTemplate", LicenseTemplate));
-			return setList.ToArray();
+			return Settings.GetSettingInfos(typeof(DefaultValues), null);
 		}
 
 		/// <summary>
@@ -345,7 +328,9 @@ namespace CSCodeGen
 		/// <param name="settings"><see cref="Settings"/> object to pull the values from.</param>
 		public static void ImportValues(Settings settings)
 		{
-			SettingInfo value = settings.FindSetting("CompanyName");
+			settings.SetProperties(typeof(DefaultValues), null);
+
+			/*SettingInfo value = settings.FindSetting("CompanyName");
 			if (value != null)
 				CompanyName = value.Value;
 			value = settings.FindSetting("CopyrightTemplate");
@@ -354,9 +339,9 @@ namespace CSCodeGen
 			value = settings.FindSetting("Developer");
 			if (value != null)
 				Developer = value.Value;
-			if (settings.TryGetArrayFromSettings<string>("FileInfoTemplate", out string[] values))
+			if (settings.TryGetArray<string>("FileInfoTemplate", out string[] values))
 				FileInfoTemplate = values;
-			if (settings.TryGetTypeFromSetting<char>("FlowerBoxCharacter", out char charValue))
+			if (settings.TryGetType<char>("FlowerBoxCharacter", out char charValue))
 				FlowerBoxCharacter = charValue;
 			value = settings.FindSetting("HtmlHelp1xCompilerPath");
 			if (value != null)
@@ -364,19 +349,19 @@ namespace CSCodeGen
 			value = settings.FindSetting("HtmlHelp2xCompilerPath");
 			if (value != null)
 				HtmlHelp2xCompilerPath = value.Value;
-			if (settings.TryGetTypeFromSetting<bool>("IncludeSubHeader", out bool boolValue))
+			if (settings.TryGetType<bool>("IncludeSubHeader", out bool boolValue))
 				IncludeSubHeader = boolValue;
-			if (settings.TryGetArrayFromSettings<string>("LicenseTemplate", out values))
+			if (settings.TryGetArray<string>("LicenseTemplate", out values))
 				LicenseTemplate = values;
-			if (settings.TryGetTypeFromSetting<int>("NumCharactersPerLine", out int intValue))
+			if (settings.TryGetType<int>("NumCharactersPerLine", out int intValue))
 				NumCharactersPerLine = intValue;
 			value = settings.FindSetting("SandcastlePath");
 			if (value != null)
 				SandcastlePath = value.Value;
-			if (settings.TryGetTypeFromSetting<int>("TabSize", out intValue))
+			if (settings.TryGetType<int>("TabSize", out intValue))
 				TabSize = intValue;
-			if (settings.TryGetTypeFromSetting<bool>("UseTabs", out boolValue))
-				UseTabs = boolValue;
+			if (settings.TryGetType<bool>("UseTabs", out boolValue))
+				UseTabs = boolValue;*/
 		}
 
 		#endregion Methods
