@@ -22,12 +22,8 @@
 //               ImportFromXML          (public)
 //*******************************************************************************************************************************
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace CSCodeGen.Parse
@@ -95,8 +91,16 @@ namespace CSCodeGen.Parse
 		///
 		/// <param name="filePath">Path to the XML file to be parsed.</param>
 		///
-		/// <exception cref="ArgumentException"><paramref name="filePath"/> is an empty array.</exception>
+		/// <exception cref="ArgumentException">
+		///   <list type="bullet">
+		///     <listheader>One of the following:</listheader>
+		///     <item><paramref name="filePath"/> is an invalid file path.</item>
+		///     <item><paramref name="filePath"/> is an empty array.</item>
+		///   </list>
+		/// </exception>
 		/// <exception cref="ArgumentNullException"><paramref name="filePath"/> is a null reference.</exception>
+		/// <exception cref="InvalidDataException">An error occurred while parsing the XML data.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="filePath"/> could not be opened.</exception>
 		//***********************************************************************************************************************
 		public SettingsFile(string filePath)
 		{
@@ -106,6 +110,25 @@ namespace CSCodeGen.Parse
 				throw new ArgumentException("filePath is empty");
 
 			ImportFromXML(filePath);
+		}
+
+		//***********************************************************************************************************************
+		/// <overloads><summary>Instantiates a new SettingsFile object.</summary></overloads>
+		///
+		/// <summary>Instantiates a new SettingsFile object using the provided <see cref="XmlReader"/>.</summary>
+		///
+		/// <param name="reader"><see cref="XmlReader"/> object containing the XML to parse.</param>
+		///
+		/// <exception cref="ArgumentNullException"><paramref name="reader"/> is a null reference.</exception>
+		/// <exception cref="InvalidDataException">An error occurred while parsing the XML data.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="reader"/> does not contain valid XML.</exception>
+		//***********************************************************************************************************************
+		public SettingsFile(XmlReader reader)
+		{
+			if (reader == null)
+				throw new ArgumentNullException("reader");
+
+			ImportFromXML(reader);
 		}
 
 		//***********************************************************************************************************************
@@ -136,6 +159,47 @@ namespace CSCodeGen.Parse
 			XmlElement root = Root.CreateElement(doc);
 			doc.AppendChild(root);
 			doc.Save(filePath);
+		}
+
+		//***********************************************************************************************************************
+		/// <summary>Exports data to an <see cref="XmlWriter"/> object.</summary>
+		///
+		/// <param name="writer"><see cref="XmlWriter"/> object to write the XML to.</param>
+		///
+		/// <exception cref="ArgumentNullException"><paramref name="writer"/> is a null reference.</exception>
+		/// <exception cref="InvalidOperationException">
+		///   An error occurred when writing the XML to the <paramref name="writer"/>.
+		/// </exception>
+		//***********************************************************************************************************************
+		public void ExportToXML(XmlWriter writer)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+			XmlDocument doc = new XmlDocument();
+			XmlDeclaration dec;
+			try
+			{
+				dec = doc.CreateXmlDeclaration(Version, Encoding, null);
+			}
+			catch(ArgumentException e)
+			{
+				throw new InvalidOperationException(string.Format(
+					"The Version ({0}) or Encoding ({1}) properties were not valid. See Inner Exception.", Version, Encoding), e);
+			}
+			doc.InsertBefore(dec, doc.DocumentElement);
+
+			XmlElement root = Root.CreateElement(doc);
+			doc.AppendChild(root);
+
+			try
+			{
+				doc.Save(writer);
+			}
+			catch(XmlException e)
+			{
+				throw new InvalidOperationException(
+					"The XML would not result in a well formed XML document. See Inner Exception.", e);
+			}
 		}
 
 		//***********************************************************************************************************************
@@ -220,6 +284,51 @@ namespace CSCodeGen.Parse
 			if(root.NodeType != XmlNodeType.Element)
 				throw new InvalidDataException("The root node is not an element node.");
 			if(string.Compare(root.Name, "settings", false) != 0)
+				throw new InvalidDataException("The root node is not a 'settings' named node.");
+			Root = new Settings(root, 0);
+		}
+
+		//***********************************************************************************************************************
+		/// <summary>Imports data from an XML file.</summary>
+		///
+		/// <param name="reader"><see cref="XmlReader"/> to import the data from.</param>
+		///
+		/// <exception cref="ArgumentNullException"><paramref name="reader"/> is a null reference.</exception>
+		/// <exception cref="InvalidDataException">An error occurred while parsing the XML data.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="reader"/> does not contain valid XML.</exception>
+		//***********************************************************************************************************************
+		public void ImportFromXML(XmlReader reader)
+		{
+			if (reader == null)
+				throw new ArgumentNullException("reader");
+
+			XmlDocument doc = new XmlDocument();
+			try
+			{
+				doc.Load(reader);
+			}
+			catch (XmlException e)
+			{
+				throw new InvalidOperationException("reader does not contain valid XML.", e);
+			}
+
+			// Pull the version and encoding
+			XmlDeclaration dec = doc.FirstChild as XmlDeclaration;
+			if (dec != null)
+			{
+				Version = dec.Version;
+				Encoding = dec.Encoding;
+			}
+			else
+			{
+				Version = "1.0";
+				Encoding = "UTF-8";
+			}
+
+			XmlElement root = doc.DocumentElement;
+			if (root.NodeType != XmlNodeType.Element)
+				throw new InvalidDataException("The root node is not an element node.");
+			if (string.Compare(root.Name, "settings", false) != 0)
 				throw new InvalidDataException("The root node is not a 'settings' named node.");
 			Root = new Settings(root, 0);
 		}
