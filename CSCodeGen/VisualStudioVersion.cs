@@ -35,6 +35,11 @@ namespace CSCodeGen
 		/// </summary>
 		VS2015,
 
+        /// <summary>
+        ///   Visual Studio 2017 or later targetting .Net Standard.
+        /// </summary>
+        VS2017,
+
 		#endregion Names
 	}
 }

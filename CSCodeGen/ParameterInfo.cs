@@ -37,6 +37,11 @@ namespace CSCodeGen
 		public bool? CanBeNull { get; set; }
 
 		/// <summary>
+		///   The default value specified in the method signature.
+		/// </summary>
+		public string Default { get; set; }
+
+		/// <summary>
 		///   Description of the parameter.
 		/// </summary>
 		public string Description { get; protected set; }
@@ -63,9 +68,10 @@ namespace CSCodeGen
 		/// <param name="description">Description of the parameter.</param>
 		/// <param name="canBeNull">Determines whether the parameter can be null or not.</param>
 		/// <param name="canBeEmpty">Determines whether the parameter can be empty or not.</param>
+		/// <param name="defaultValue">Default value of the parameter.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="description"/> is a null reference.</exception>
 		/// <exception cref="ArgumentException"><paramref name="type"/>, <paramref name="name"/>, or <paramref name="description"/> is an empty string.</exception>
-		public ParameterInfo(string type, string name, string description, bool? canBeNull = null, bool? canBeEmpty = null)
+		public ParameterInfo(string type, string name, string description, bool? canBeNull = null, bool? canBeEmpty = null, string defaultValue = null)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
@@ -83,6 +89,7 @@ namespace CSCodeGen
 			Name = name;
 			Type = type;
 			Description = description;
+			Default = defaultValue;
 			CanBeNull = canBeNull;
 			CanBeEmpty = canBeEmpty;
 		}

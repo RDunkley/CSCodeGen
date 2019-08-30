@@ -98,7 +98,7 @@ namespace CSCodeGen
 			RootNamespace = "CodeGen";
 			RelativePath = relativePath;
 			References = new List<ProjectReferenceAssembly>();
-			Version = VisualStudioVersion.VS2015;
+			Version = VisualStudioVersion.VS2017;
 		}
 
 		/// <summary>

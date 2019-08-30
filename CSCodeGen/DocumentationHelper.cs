@@ -1007,6 +1007,8 @@ namespace CSCodeGen
 			foreach (ParameterInfo param in parameters)
 			{
 				string nextPair = string.Format("{0} {1}", param.Type, param.Name);
+				if (!string.IsNullOrEmpty(param.Default))
+					nextPair = string.Format("{0} = {1}", nextPair, param.Default);
 				if ((wsSize + sb.Length + nextPair.Length + 1) > DefaultValues.NumCharactersPerLine)
 				{
 					DocumentationHelper.WriteLine(wr, sb.ToString(), indentOffset + addedIndent);

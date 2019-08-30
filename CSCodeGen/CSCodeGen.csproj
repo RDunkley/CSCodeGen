@@ -1,88 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5A0655C3-B2BD-4B4B-BFE5-3EE9BD9A8A4B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CSCodeGen</RootNamespace>
-    <AssemblyName>CSCodeGen</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="BaseProject.cs" />
-    <Compile Include="BaseTypeInfo.cs" />
-    <Compile Include="BinaryUtility.cs" />
-    <Compile Include="ClassInfo.cs" />
-    <Compile Include="ConstructorInfo.cs" />
-    <Compile Include="DefaultValues.cs" />
-    <Compile Include="DocumentationHelper.cs" />
-    <Compile Include="EnumInfo.cs" />
-    <Compile Include="EnumValueInfo.cs" />
-    <Compile Include="ExceptionInfo.cs" />
-    <Compile Include="FieldInfo.cs" />
-    <Compile Include="FileInfo.cs" />
-    <Compile Include="GuiComponentInfo.cs" />
-    <Compile Include="MethodInfo.cs" />
-    <Compile Include="NamespaceTypeInfo.cs" />
-    <Compile Include="ParameterInfo.cs" />
-    <Compile Include="Parse\SettingInfo.AutoGen.cs" />
-    <Compile Include="Parse\Settings.AutoGen.cs" />
-    <Compile Include="Parse\Settings.cs" />
-    <Compile Include="Parse\SettingsFile.AutoGen.cs" />
-    <Compile Include="Parse\SettingsFile.cs" />
-    <Compile Include="ProjectFile.cs" />
-    <Compile Include="ProjectInfo.cs" />
-    <Compile Include="ProjectReferenceAssembly.cs" />
-    <Compile Include="ProjectType.cs" />
-    <Compile Include="PropertyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SHFB\Content.cs" />
-    <Compile Include="SHFB\NamespaceSummary.cs" />
-    <Compile Include="SHFB\SHFBProject.cs" />
-    <Compile Include="SolutionInfo.cs" />
-    <Compile Include="DesignerInfo.cs" />
-    <Compile Include="StringUtility.cs" />
-    <Compile Include="VisualStudioVersion.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
+		<Version>1.0.0.29</Version>
+    <Title>CSCodeGen</Title>
+		<Description>C# Code Generation Library</Description>
+		<Authors>Richard Dunkley</Authors>
+		<Copyright>Copyright © Richard Dunkley 2019</Copyright>
+		<RepositoryUrl>https://github.com/RDunkley/CSCodeGen</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseUrl>https://github.com/RDunkley/CSCodeGen/blob/master/LICENSE</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/RDunkley/CSCodeGen</PackageProjectUrl>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningLevel>0</WarningLevel>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
 </Project>

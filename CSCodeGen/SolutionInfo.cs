@@ -63,7 +63,7 @@ namespace CSCodeGen
 
 			Name = name;
 			ProjectDependencies = new Dictionary<BaseProject, List<BaseProject>>();
-			Version = VisualStudioVersion.VS2015;
+			Version = VisualStudioVersion.VS2017;
 			Projects = new List<BaseProject>();
 		}
 
@@ -114,7 +114,13 @@ namespace CSCodeGen
 						wr.WriteLine("VisualStudioVersion = 14.0.23107.0");
 						wr.WriteLine("MinimumVisualStudioVersion = 10.0.40219.1");
 						break;
-					default:
+                    case VisualStudioVersion.VS2017:
+                        wr.WriteLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                        wr.WriteLine("# Visual Studio 15");
+                        wr.WriteLine("VisualStudioVersion = 15.0.28307.421");
+                        wr.WriteLine("MinimumVisualStudioVersion = 10.0.40219.1");
+                        break;
+                    default:
 						throw new NotImplementedException("The Visual Studio Version was not recognized as a supported version");
 				}
 

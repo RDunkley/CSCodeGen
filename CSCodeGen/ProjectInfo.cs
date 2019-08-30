@@ -11,10 +11,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
+using CSCodeGen.Parse.Project;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace CSCodeGen
 {
@@ -283,90 +285,106 @@ namespace CSCodeGen
 				releasePath = StringUtility.ConvertAbsolutePathToRelative(releasePath, fullFolderPath);
 
 			string path = Path.Combine(fullFolderPath, ProjectFileName);
-			using (StreamWriter sw = new StreamWriter(path))
-			{
-				sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
-					sw.WriteLine("<Project ToolsVersion=\"4.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
-				else if (Version == VisualStudioVersion.VS2015)
-					sw.WriteLine("<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
-				else
-					throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
-				sw.WriteLine("	<PropertyGroup>");
-				sw.WriteLine("		<Configuration Condition=\" '$(Configuration)' == '' \">Debug</Configuration>");
-				sw.WriteLine("		<Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>");
-				sw.WriteLine(string.Format("		<ProjectGuid>{0}</ProjectGuid>", Guid.ToString("B")));
-				sw.WriteLine(string.Format("		<OutputType>{0}</OutputType>", GetProjectType(Type)));
-				sw.WriteLine("		<AppDesignerFolder>Properties</AppDesignerFolder>");
-				sw.WriteLine("		<SolutionDirName>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)\\..\\').Name)</SolutionDirName>");
-				sw.WriteLine(string.Format("		<RootNamespace>{0}</RootNamespace>", RootNamespace));
-				sw.WriteLine(string.Format("		<AssemblyName>{0}</AssemblyName>", Name));
-				if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
-					sw.WriteLine("		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
-				else if(Version == VisualStudioVersion.VS2015)
-					sw.WriteLine("		<TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>");
-				else
-					throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
-				sw.WriteLine("		<FileAlignment>512</FileAlignment>");
-				sw.WriteLine("	</PropertyGroup>");
-				sw.WriteLine("	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">");
-				sw.WriteLine("		<DebugSymbols>true</DebugSymbols>");
-				sw.WriteLine("		<DebugType>full</DebugType>");
-				sw.WriteLine("		<Optimize>false</Optimize>");
-				sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", debugPath));
-				sw.WriteLine("		<DefineConstants>DEBUG;TRACE</DefineConstants>");
-				sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
-				sw.WriteLine("		<WarningLevel>4</WarningLevel>");
-				if(IncludeDebugDocumentationFile)
-					sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", debugPath, Name));
-				sw.WriteLine("	</PropertyGroup>");
-				sw.WriteLine("	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' \">");
-				sw.WriteLine("		<DebugType>pdbonly</DebugType>");
-				sw.WriteLine("		<Optimize>true</Optimize>");
-				sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", releasePath));
-				sw.WriteLine("		<DefineConstants>TRACE</DefineConstants>");
-				sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
-				if(IncludeReleaseDocumentationFile)
-					sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", releasePath, Name));
-				sw.WriteLine("		<WarningLevel>4</WarningLevel>");
-				sw.WriteLine("	</PropertyGroup>");
-				sw.WriteLine("	<ItemGroup>");
-				foreach (ProjectReferenceAssembly nameSpace in References)
-				{
-					string[] lines = nameSpace.GenerateProjectXMLLines();
-					foreach (string line in lines)
-						sw.WriteLine(line);
-				}
-				sw.WriteLine("	</ItemGroup>");
-				sw.WriteLine("	<ItemGroup>");
-				foreach (ProjectFile projectFile in Files)
-				{
-					if (projectFile.SubType == null && projectFile.DependentUpon == null)
-					{
-						sw.WriteLine(string.Format("		<Compile Include=\"{0}\" />", Path.Combine(projectFile.Source.RelativePath, projectFile.Source.FileName)));
-					}
-					else
-					{
-						sw.WriteLine(string.Format("		<Compile Include=\"{0}\" >", Path.Combine(projectFile.Source.RelativePath, projectFile.Source.FileName)));
-						if (projectFile.SubType != null)
-							sw.WriteLine(string.Format("			<SubType>{0}</SubType>", projectFile.SubType));
-						if (projectFile.DependentUpon != null)
-							sw.WriteLine(string.Format("			<DependentUpon>{0}</DependentUpon>", projectFile.DependentUpon));
-						sw.WriteLine("		</Compile>");
-					}
-				}
-				if(AssemblyInformation != null)
-					sw.WriteLine("		<Compile Include=\"Properties\\AssemblyInfo.cs\" />");
-				sw.WriteLine("	</ItemGroup>");
-				sw.WriteLine("	<Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
-				sw.WriteLine("	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. ");
-				sw.WriteLine("	Other similar extension points exist, see Microsoft.Common.targets.");
-				sw.WriteLine("	<Target Name=\"BeforeBuild\">");
-				sw.WriteLine("	</Target>");
-				sw.WriteLine("	<Target Name=\"AfterBuild\">");
-				sw.WriteLine("	</Target>");
-				sw.WriteLine("	-->");
-				sw.Write("</Project>");
+            if(Version == VisualStudioVersion.VS2017)
+            {
+                using (XmlWriter wr = XmlWriter.Create(path))
+                {
+                    List<PropertyGroup> pgList = new List<PropertyGroup>(2);
+                    pgList.Add(new PropertyGroup(null, new TargetFramework[] { new TargetFramework("netstandard2.0") }, new WarningLevel[0]));
+                    pgList.Add(new PropertyGroup("'$(Configuration)|$(Platform)'=='Debug|AnyCPU'", new TargetFramework[0], new WarningLevel[] { new WarningLevel(0) }));
+                    Project projFile = new Project("Microsoft.NET.Sdk", pgList.ToArray());
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlElement el = projFile.CreateElement(xmlDoc);
+                    el.WriteTo(XmlWriter.Create(wr));
+                }
+            }
+            else
+            {
+			    using (StreamWriter sw = new StreamWriter(path))
+			    {
+                    sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+                    if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
+                        sw.WriteLine("<Project ToolsVersion=\"4.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
+                    else if (Version == VisualStudioVersion.VS2015)
+                        sw.WriteLine("<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
+                    else
+                        throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
+                    sw.WriteLine("	<PropertyGroup>");
+                    sw.WriteLine("		<Configuration Condition=\" '$(Configuration)' == '' \">Debug</Configuration>");
+                    sw.WriteLine("		<Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>");
+                    sw.WriteLine(string.Format("		<ProjectGuid>{0}</ProjectGuid>", Guid.ToString("B")));
+                    sw.WriteLine(string.Format("		<OutputType>{0}</OutputType>", GetProjectType(Type)));
+                    sw.WriteLine("		<AppDesignerFolder>Properties</AppDesignerFolder>");
+                    sw.WriteLine("		<SolutionDirName>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)\\..\\').Name)</SolutionDirName>");
+                    sw.WriteLine(string.Format("		<RootNamespace>{0}</RootNamespace>", RootNamespace));
+                    sw.WriteLine(string.Format("		<AssemblyName>{0}</AssemblyName>", Name));
+                    if (Version == VisualStudioVersion.VS2010 || Version == VisualStudioVersion.VS2013)
+                        sw.WriteLine("		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
+                    else if (Version == VisualStudioVersion.VS2015)
+                        sw.WriteLine("		<TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>");
+                    else
+                        throw new NotImplementedException("The Visual Studio version provided was not recognized as a supported version.");
+                    sw.WriteLine("		<FileAlignment>512</FileAlignment>");
+                    sw.WriteLine("	</PropertyGroup>");
+                    sw.WriteLine("	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">");
+                    sw.WriteLine("		<DebugSymbols>true</DebugSymbols>");
+                    sw.WriteLine("		<DebugType>full</DebugType>");
+                    sw.WriteLine("		<Optimize>false</Optimize>");
+                    sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", debugPath));
+                    sw.WriteLine("		<DefineConstants>DEBUG;TRACE</DefineConstants>");
+                    sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
+                    sw.WriteLine("		<WarningLevel>4</WarningLevel>");
+                    if (IncludeDebugDocumentationFile)
+                        sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", debugPath, Name));
+                    sw.WriteLine("	</PropertyGroup>");
+                    sw.WriteLine("	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' \">");
+                    sw.WriteLine("		<DebugType>pdbonly</DebugType>");
+                    sw.WriteLine("		<Optimize>true</Optimize>");
+                    sw.WriteLine(string.Format("		<OutputPath>{0}</OutputPath>", releasePath));
+                    sw.WriteLine("		<DefineConstants>TRACE</DefineConstants>");
+                    sw.WriteLine("		<ErrorReport>prompt</ErrorReport>");
+                    if (IncludeReleaseDocumentationFile)
+                        sw.WriteLine(string.Format("		<DocumentationFile>{0}{1}.xml</DocumentationFile>", releasePath, Name));
+                    sw.WriteLine("		<WarningLevel>4</WarningLevel>");
+                    sw.WriteLine("	</PropertyGroup>");
+                    sw.WriteLine("	<ItemGroup>");
+                    foreach (ProjectReferenceAssembly nameSpace in References)
+                    {
+                        string[] lines = nameSpace.GenerateProjectXMLLines();
+                        foreach (string line in lines)
+                            sw.WriteLine(line);
+                    }
+                    sw.WriteLine("	</ItemGroup>");
+                    sw.WriteLine("	<ItemGroup>");
+                    foreach (ProjectFile projectFile in Files)
+                    {
+                        if (projectFile.SubType == null && projectFile.DependentUpon == null)
+                        {
+                            sw.WriteLine(string.Format("		<Compile Include=\"{0}\" />", Path.Combine(projectFile.Source.RelativePath, projectFile.Source.FileName)));
+                        }
+                        else
+                        {
+                            sw.WriteLine(string.Format("		<Compile Include=\"{0}\" >", Path.Combine(projectFile.Source.RelativePath, projectFile.Source.FileName)));
+                            if (projectFile.SubType != null)
+                                sw.WriteLine(string.Format("			<SubType>{0}</SubType>", projectFile.SubType));
+                            if (projectFile.DependentUpon != null)
+                                sw.WriteLine(string.Format("			<DependentUpon>{0}</DependentUpon>", projectFile.DependentUpon));
+                            sw.WriteLine("		</Compile>");
+                        }
+                    }
+                    if (AssemblyInformation != null)
+                        sw.WriteLine("		<Compile Include=\"Properties\\AssemblyInfo.cs\" />");
+                    sw.WriteLine("	</ItemGroup>");
+                    sw.WriteLine("	<Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
+                    sw.WriteLine("	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. ");
+                    sw.WriteLine("	Other similar extension points exist, see Microsoft.Common.targets.");
+                    sw.WriteLine("	<Target Name=\"BeforeBuild\">");
+                    sw.WriteLine("	</Target>");
+                    sw.WriteLine("	<Target Name=\"AfterBuild\">");
+                    sw.WriteLine("	</Target>");
+                    sw.WriteLine("	-->");
+                    sw.Write("</Project>");
+                }
 			}
 		}
 
