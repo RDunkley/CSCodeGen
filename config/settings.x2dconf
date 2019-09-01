@@ -1,4 +1,4 @@
-<save_data MainClassName="SettingsFile" OutputFolder="C:\Users\dunk\Desktop\Code\xmltodata" NameSpace="CSCodeGen.Parse" GenerateProject="False" ProjectName="FileStream" GenerateSolution="False" SolutionName="FileStream">
+<save_data OutputFolder="C:\Users\dunk\Desktop\Code\xmltodata" NameSpace="CSCodeGen.Parse.SettingFile" GenerateProject="False" ProjectName="FileStream" GenerateSolution="False" SolutionName="FileStream">
   <setting ClassName="SettingInfo" Summary="Represents a setting from the file." Remarks="" Accessibility="Public">
     <name SelectedDataType="String" CanBeEmpty="False" IsOptional="False" PropertyName="Name" Summary="Gets the name of the setting." Remarks="" Accessibility="Public">
       <Boolean>
@@ -592,7 +592,7 @@
       <IPAddress />
       <GUID />
     </date>
-    <version SelectedDataType="Version" CanBeEmpty="False" IsOptional="False" PropertyName="Version" Summary="Gets the version of the XML to Data Class Application that generated the file." Remarks="" Accessibility="Public">
+    <version SelectedDataType="Version" CanBeEmpty="False" IsOptional="False" PropertyName="Version" Summary="Gets the version of the application that generated the file." Remarks="" Accessibility="Public">
       <Boolean>
         <setting name="AllowTrueFalseStrings" value="True" />
         <setting name="AllowYesNoStrings" value="True" />

@@ -11,7 +11,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
-using CSCodeGen.Parse;
+using CSCodeGen.Parse.SettingsFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -130,7 +130,7 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void cancelButton_Click(object sender, EventArgs e)
+		private void CancelButton_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.Cancel;
 			this.Close();
@@ -141,12 +141,14 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void exportButton_Click(object sender, EventArgs e)
+		private void ExportButton_Click(object sender, EventArgs e)
 		{
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.Filter = BuildFilterString();
-			dialog.OverwritePrompt = true;
-			dialog.Title = "Select the File to Export the Setting Values To";
+			SaveFileDialog dialog = new SaveFileDialog
+			{
+				Filter = BuildFilterString(),
+				OverwritePrompt = true,
+				Title = "Select the File to Export the Setting Values To"
+			};
 
 			if (dialog.ShowDialog() != DialogResult.OK)
 				return;
@@ -155,11 +157,9 @@ namespace CSCodeGenSettingsGui
 				return;
 
 			Settings root = new Settings(DateTime.Now, new Version(1, 0), mPanel.ExportSettings());
-			SettingsFile sf = new SettingsFile(root);
-
 			try
 			{
-				sf.ExportToXML(dialog.FileName);
+				root.ExportToXML(dialog.FileName);
 			}
 			catch (Exception error)
 			{
@@ -178,22 +178,24 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void importButton_Click(object sender, EventArgs e)
+		private void ImportButton_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.CheckFileExists = true;
-			dialog.CheckPathExists = true;
-			dialog.Filter = BuildFilterString();
-			dialog.Title = "Select the File Containing the Settings Values";
-			dialog.Multiselect = false;
+			OpenFileDialog dialog = new OpenFileDialog
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter = BuildFilterString(),
+				Title = "Select the File Containing the Settings Values",
+				Multiselect = false
+			};
 
 			if (dialog.ShowDialog() != DialogResult.OK)
 				return;
 
-			SettingsFile sf;
+			Settings sf;
 			try
 			{
-				sf = new SettingsFile(dialog.FileName);
+				sf = new Settings(dialog.FileName);
 			}
 			catch (Exception error)
 			{
@@ -211,7 +213,7 @@ namespace CSCodeGenSettingsGui
 				throw;
 			}
 
-			mPanel.ImportSettings(sf.Root);
+			mPanel.ImportSettings(sf);
 		}
 
 		/// <summary>
@@ -219,7 +221,7 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void okButton_Click(object sender, EventArgs e)
+		private void OkButton_Click(object sender, EventArgs e)
 		{
 			if (!mPanel.ValidateSettings())
 				return;

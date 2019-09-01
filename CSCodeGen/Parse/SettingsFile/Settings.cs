@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 
-namespace CSCodeGen.Parse
+namespace CSCodeGen.Parse.SettingsFile
 {
 	/// <summary>
 	///   Adds additional functionality to the auto-generated <see cref="Settings"/> partial class.

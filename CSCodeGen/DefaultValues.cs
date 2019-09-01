@@ -12,7 +12,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 //********************************************************************************************************************************
-using CSCodeGen.Parse;
+using CSCodeGen.Parse.SettingsFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -221,11 +221,10 @@ namespace CSCodeGen
 				throw new ArgumentException(string.Format("The file path specified ({0}) already exists.", filePath));
 
 			Settings root = new Settings(DateTime.Now, new Version(1, 0), ExportValues());
-			SettingsFile sf = new SettingsFile(root);
 
 			try
 			{
-				sf.ExportToXML(filePath);
+				root.ExportToXML(filePath);
 			}
 			catch(InvalidOperationException e)
 			{
@@ -307,10 +306,10 @@ namespace CSCodeGen
 			if (!File.Exists(filePath))
 				throw new ArgumentException(string.Format("The file path specified ({0}) does not exist.", filePath));
 
-			SettingsFile sf;
+			Settings sf;
 			try
 			{
-				sf = new SettingsFile(filePath);
+				sf = new Settings(filePath);
 			}
 			catch (Exception e)
 			{
@@ -319,7 +318,7 @@ namespace CSCodeGen
 				throw;
 			}
 
-			ImportValues(sf.Root);
+			ImportValues(sf);
 		}
 
 		/// <summary>

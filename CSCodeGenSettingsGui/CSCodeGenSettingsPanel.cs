@@ -13,7 +13,7 @@
 // limitations under the License.
 //********************************************************************************************************************************
 using CSCodeGen;
-using CSCodeGen.Parse;
+using CSCodeGen.Parse.SettingsFile;
 using System;
 using System.IO;
 using System.Security;
@@ -304,14 +304,16 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void html1BrowseButton_Click(object sender, EventArgs e)
+		private void Html1BrowseButton_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.CheckFileExists = true;
-			dialog.CheckPathExists = true;
-			dialog.Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*";
-			dialog.Title = "Select the HTML 1.x Compiler Executable";
-			dialog.Multiselect = false;
+			OpenFileDialog dialog = new OpenFileDialog
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*",
+				Title = "Select the HTML 1.x Compiler Executable",
+				Multiselect = false
+			};
 			if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.HTML1BrowsePath))
 				dialog.InitialDirectory = Properties.Settings.Default.HTML1BrowsePath;
 
@@ -328,14 +330,16 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void html2BrowseButton_Click(object sender, EventArgs e)
+		private void Html2BrowseButton_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.CheckFileExists = true;
-			dialog.CheckPathExists = true;
-			dialog.Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*";
-			dialog.Title = "Select the HTML 2.x Compiler Executable";
-			dialog.Multiselect = false;
+			OpenFileDialog dialog = new OpenFileDialog
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*",
+				Title = "Select the HTML 2.x Compiler Executable",
+				Multiselect = false
+			};
 			if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.HTML2BrowsePath))
 				dialog.InitialDirectory = Properties.Settings.Default.HTML2BrowsePath;
 
@@ -370,11 +374,13 @@ namespace CSCodeGenSettingsGui
 		/// </summary>
 		/// <param name="sender">This object.</param>
 		/// <param name="e">Arguments for the event.</param>
-		private void sandcastleBrowseButton_Click(object sender, EventArgs e)
+		private void SandcastleBrowseButton_Click(object sender, EventArgs e)
 		{
-			FolderBrowserDialog dialog = new FolderBrowserDialog();
-			dialog.Description = "Select the folder where Sandcastle is installed in";
-			dialog.ShowNewFolderButton = true;
+			FolderBrowserDialog dialog = new FolderBrowserDialog
+			{
+				Description = "Select the folder where Sandcastle is installed in",
+				ShowNewFolderButton = true
+			};
 			if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.SandcastleBrowsePath))
 				dialog.SelectedPath = Properties.Settings.Default.SandcastleBrowsePath;
 

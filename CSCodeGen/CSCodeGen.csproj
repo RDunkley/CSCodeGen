@@ -11,8 +11,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseUrl>https://github.com/RDunkley/CSCodeGen/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/RDunkley/CSCodeGen</PackageProjectUrl>
-		<AssemblyVersion>1.0.0.30</AssemblyVersion>
-		<FileVersion>1.0.0.30</FileVersion>
+		<AssemblyVersion>1.0.0.31</AssemblyVersion>
+		<FileVersion>1.0.0.31</FileVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<WarningLevel>0</WarningLevel>

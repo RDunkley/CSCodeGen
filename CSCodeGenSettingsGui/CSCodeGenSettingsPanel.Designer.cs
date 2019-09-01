@@ -609,7 +609,7 @@
 			this.html1BrowseButton.TabIndex = 2;
 			this.html1BrowseButton.Text = "Browse";
 			this.html1BrowseButton.UseVisualStyleBackColor = true;
-			this.html1BrowseButton.Click += new System.EventHandler(this.html1BrowseButton_Click);
+			this.html1BrowseButton.Click += new System.EventHandler(this.Html1BrowseButton_Click);
 			// 
 			// label13
 			// 
@@ -639,7 +639,7 @@
 			this.html2BrowseButton.TabIndex = 5;
 			this.html2BrowseButton.Text = "Browse";
 			this.html2BrowseButton.UseVisualStyleBackColor = true;
-			this.html2BrowseButton.Click += new System.EventHandler(this.html2BrowseButton_Click);
+			this.html2BrowseButton.Click += new System.EventHandler(this.Html2BrowseButton_Click);
 			// 
 			// label14
 			// 
@@ -668,7 +668,7 @@
 			this.sandcastleBrowseButton.TabIndex = 8;
 			this.sandcastleBrowseButton.Text = "Browse";
 			this.sandcastleBrowseButton.UseVisualStyleBackColor = true;
-			this.sandcastleBrowseButton.Click += new System.EventHandler(this.sandcastleBrowseButton_Click);
+			this.sandcastleBrowseButton.Click += new System.EventHandler(this.SandcastleBrowseButton_Click);
 			// 
 			// CSCodeGenSettingsPanel
 			// 

@@ -66,7 +66,7 @@
 			this.okButton.TabIndex = 0;
 			this.okButton.Text = "Ok";
 			this.okButton.UseVisualStyleBackColor = true;
-			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			this.okButton.Click += new System.EventHandler(this.OkButton_Click);
 			// 
 			// cancelButton
 			// 
@@ -77,7 +77,7 @@
 			this.cancelButton.TabIndex = 1;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.UseVisualStyleBackColor = true;
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
 			// 
 			// importButton
 			// 
@@ -87,7 +87,7 @@
 			this.importButton.TabIndex = 2;
 			this.importButton.Text = "Import";
 			this.importButton.UseVisualStyleBackColor = true;
-			this.importButton.Click += new System.EventHandler(this.importButton_Click);
+			this.importButton.Click += new System.EventHandler(this.ImportButton_Click);
 			// 
 			// exportButton
 			// 
@@ -97,7 +97,7 @@
 			this.exportButton.TabIndex = 3;
 			this.exportButton.Text = "Export";
 			this.exportButton.UseVisualStyleBackColor = true;
-			this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+			this.exportButton.Click += new System.EventHandler(this.ExportButton_Click);
 			// 
 			// SettingsForm
 			// 
