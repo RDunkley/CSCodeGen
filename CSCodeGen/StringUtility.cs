@@ -288,6 +288,18 @@ namespace CSCodeGen
 		}
 
 		/// <summary>
+		///   Gets the string representation of a boolean value.
+		/// </summary>
+		/// <param name="value">Value to get the string of.</param>
+		/// <returns>'true' or 'false' based on <paramref name="value"/>.</returns>
+		public static string GetTrueFalseString(bool value)
+		{
+			if (value)
+				return "true";
+			return "false";
+		}
+
+		/// <summary>
 		///   Gets the upper camel case of the provided name.
 		/// </summary>
 		/// <param name="name">Name to convert to upper camel case.</param>

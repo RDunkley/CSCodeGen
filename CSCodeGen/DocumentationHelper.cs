@@ -977,7 +977,7 @@ namespace CSCodeGen
 		/// <param name="returnType">Return type of the method, null for a constructor.</param>
 		/// <param name="parameters">List of <see cref="ParameterInfo"/> objects representing the parameters of the method. Can be null or empty.</param>
 		/// <param name="baseParameters">Lookup table of the base method's parameters. Can be null or empty.</param>
-		public static void WriteSignature(StreamWriter wr, int indentOffset, string access, string name, string returnType = null, ParameterInfo[] parameters = null, SortedDictionary<int, ParameterInfo> baseParameters = null)
+		public static void WriteSignature(StreamWriter wr, int indentOffset, string access, string name, string returnType = null, ParameterInfo[] parameters = null, SortedDictionary<int, string> baseParameters = null)
 		{
 			if (wr == null)
 				throw new ArgumentNullException("wr");
@@ -1028,11 +1028,11 @@ namespace CSCodeGen
 			if (baseParameters != null && baseParameters.Count > 0)
 			{
 				bb.Append(" : base(");
-				SortedDictionary<int, ParameterInfo>.ValueCollection values = baseParameters.Values;
+				SortedDictionary<int, string>.ValueCollection values = baseParameters.Values;
 				int pIndex = 0;
-				foreach (ParameterInfo param in values)
+				foreach (string param in values)
 				{
-					bb.Append(param.Name);
+					bb.Append(param);
 					if (pIndex < values.Count - 1)
 						bb.Append(", ");
 					pIndex++;

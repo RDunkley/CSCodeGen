@@ -28,7 +28,7 @@ namespace CSCodeGen
 		/// <summary>
 		///   Specifies any base parameters that should be passed to the base class. Must be in order. Can be null if no base class is called.
 		/// </summary>
-		public SortedDictionary<int,ParameterInfo> BaseParameters { get; private set; }
+		public SortedDictionary<int,string> BaseParameters { get; private set; }
 
 		/// <summary>
 		///   Code lines of the constructor.
@@ -60,7 +60,7 @@ namespace CSCodeGen
 		/// <exception cref="ArgumentException"><paramref name="access"/>, <paramref name="name"/>, or <paramref name="summary"/> is an empty string.</exception>
 		public ConstructorInfo(string access, string name, string summary, string remarks = null) : base(access, name, summary, remarks)
 		{
-			BaseParameters = new SortedDictionary<int, ParameterInfo>();
+			BaseParameters = new SortedDictionary<int, string>();
 			Parameters = new List<ParameterInfo>();
 			Exceptions = new List<ExceptionInfo>();
 			CodeLines = new List<string>();

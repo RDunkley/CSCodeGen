@@ -2,17 +2,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<Version>1.0.0.29</Version>
-    <Title>CSCodeGen</Title>
+		<Version>1.0.0.32</Version>
+		<Title>CSCodeGen</Title>
 		<Description>C# Code Generation Library</Description>
 		<Authors>Richard Dunkley</Authors>
-		<Copyright>Copyright © Richard Dunkley 2019</Copyright>
+		<Copyright>Copyright © Richard Dunkley 2025</Copyright>
 		<RepositoryUrl>https://github.com/RDunkley/CSCodeGen</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseUrl>https://github.com/RDunkley/CSCodeGen/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/RDunkley/CSCodeGen</PackageProjectUrl>
-		<AssemblyVersion>1.0.0.31</AssemblyVersion>
-		<FileVersion>1.0.0.31</FileVersion>
+		<AssemblyVersion>1.0.0.32</AssemblyVersion>
+		<FileVersion>1.0.0.32</FileVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<WarningLevel>0</WarningLevel>
